@@ -733,6 +733,202 @@ ul, ol { list-style: none; }
   transform: translateX(-50%) translateY(0);
 }
 
+/* ========== 长视频合成 Modal ========== */
+.seg-pick-list {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+  max-height: 320px;
+  overflow-y: auto;
+}
+/* 段标题行(灰色,不可勾选,折叠下方版本行) */
+.seg-pick-group-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.seg-pick-group-header .seg-pick-no {
+  font-weight: 600;
+  color: var(--text-2);
+  font-size: 12px;
+}
+.seg-pick-group-header .seg-pick-time {
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.seg-pick-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px 8px 32px;  /* 左边缩进表明属于上方段 */
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.seg-pick-item.ver { padding-left: 32px; }
+.seg-pick-item:last-child { border-bottom: none; }
+.seg-pick-item.checked { background: var(--brand-bg); }
+.seg-pick-item.disabled { opacity: 0.5; cursor: not-allowed; }
+.seg-pick-item.disabled .seg-pick-checkbox { cursor: not-allowed; }
+.seg-pick-checkbox {
+  width: 18px; height: 18px;
+  accent-color: var(--brand);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.seg-pick-info {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+.seg-pick-ver-label {
+  font-weight: 600;
+  color: var(--text-1);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  min-width: 28px;
+}
+.seg-pick-no {
+  font-weight: 500;
+  color: var(--text-1);
+}
+.seg-pick-time {
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.seg-pick-status-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.seg-pick-order {
+  font-size: 11px;
+  color: var(--brand);
+  font-weight: 600;
+  min-width: 22px;
+  text-align: center;
+  background: white;
+  border: 1.5px solid var(--brand);
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: inline-grid;
+  place-items: center;
+  font-family: var(--font-mono);
+}
+.seg-pick-actions {
+  display: flex;
+  gap: 4px;
+}
+.seg-pick-arrow {
+  width: 24px; height: 24px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: var(--text-2);
+  background: var(--bg-elevated);
+  transition: all 0.15s;
+}
+.seg-pick-arrow:hover:not(:disabled) {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+.seg-pick-arrow:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.seg-pick-arrow .ti { font-size: 14px; }
+
+/* 已合成版本列表 */
+.composed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.composed-list-empty {
+  padding: 16px;
+  text-align: center;
+  color: var(--text-3);
+  font-size: 13px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+.composed-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+}
+.composed-item.composing {
+  background: var(--purple-bg);
+  border-color: var(--purple);
+}
+.composed-item.failed {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+}
+.composed-item-icon {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  font-size: 16px;
+  background: var(--brand-bg);
+  color: var(--brand);
+}
+.composed-item.composing .composed-item-icon {
+  background: rgba(114,46,209,0.15);
+  color: var(--purple);
+}
+.composed-item.failed .composed-item-icon {
+  background: rgba(245,63,63,0.15);
+  color: var(--danger);
+}
+.composed-item-info {
+  flex: 1;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.composed-item-name {
+  color: var(--text-1);
+  font-weight: 500;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.composed-item-meta {
+  font-size: 11px;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+}
+.composed-item-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
 /* 模板包裹的提示词(中间区视频下方 / 失败段 / 重做 Modal 统一) */
 .prompt-template-wrap {
   background: #FAFBFC;
@@ -1003,6 +1199,98 @@ ul, ol { list-style: none; }
   border-radius: 12px;
 }
 
+/* 视频预览 Lightbox */
+.video-lightbox-content {
+  width: min(800px, 85vw);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.video-lightbox-player {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: linear-gradient(135deg, #6b4615 0%, #d9a04a 100%);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  box-shadow: var(--shadow-lg);
+}
+.video-lightbox-play {
+  width: 76px; height: 76px;
+  background: rgba(0,0,0,0.5);
+  border: 2px solid rgba(255,255,255,0.85);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.video-lightbox-play:hover { transform: scale(1.08); }
+.video-lightbox-play::after {
+  content: '';
+  width: 0; height: 0;
+  border-left: 22px solid white;
+  border-top: 14px solid transparent;
+  border-bottom: 14px solid transparent;
+  margin-left: 6px;
+}
+.video-lightbox-bar {
+  position: absolute;
+  left: 14px; right: 14px; bottom: 14px;
+  height: 5px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.video-lightbox-bar-fill {
+  width: 0;
+  height: 100%;
+  background: var(--brand);
+  border-radius: 3px;
+  transition: width 0.1s linear;
+}
+.video-lightbox-time {
+  position: absolute;
+  top: 14px; right: 14px;
+  background: rgba(0,0,0,0.55);
+  color: white;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+.video-lightbox-time-overlay {
+  position: absolute;
+  bottom: 28px;
+  left: 14px;
+  color: white;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  background: rgba(0,0,0,0.5);
+  padding: 2px 8px;
+  border-radius: 8px;
+}
+.video-lightbox-info {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+  padding: 14px 18px;
+  box-shadow: var(--shadow-md);
+}
+.video-lightbox-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-1);
+  margin-bottom: 6px;
+}
+.video-lightbox-meta {
+  font-size: 12px;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  line-height: 1.7;
+}
+
 /* Modal */
 .modal-mask {
   position: fixed;
@@ -1080,13 +1368,13 @@ ul, ol { list-style: none; }
 
   <!-- 侧边栏 -->
   <aside class="sidebar">
-    <div class="nav-group-title">主链路</div>
+    <div class="nav-group-title">AI视频主链路</div>
     <a class="nav-item active" href="task-list.html"><i class="ti ti-list-check"></i><span>任务管理</span></a>
     <a class="nav-item" href="task-create.html"><i class="ti ti-plus"></i><span>新建生成任务</span></a>
-    <div class="nav-group-title">后期工程</div>
-    <a class="nav-item"><i class="ti ti-movie"></i><span>长视频合成</span></a>
-    <a class="nav-item" style="opacity:0.5; cursor:not-allowed;"><i class="ti ti-typography"></i><span>字幕处理</span><span class="tag tag-default" style="margin-left:auto; font-size:10px;">规划中</span></a>
-    <a class="nav-item" style="opacity:0.5; cursor:not-allowed;"><i class="ti ti-music"></i><span>音频处理</span><span class="tag tag-default" style="margin-left:auto; font-size:10px;">规划中</span></a>
+    <div class="nav-group-title">视频后期加工</div>
+    <a class="nav-item" style="opacity:0.5; cursor:not-allowed;"><i class="ti ti-movie"></i><span>长视频合成</span><span class="tag tag-brand" style="margin-left:auto; font-size:10px;">二期</span></a>
+    <a class="nav-item" style="opacity:0.5; cursor:not-allowed;"><i class="ti ti-letter-t"></i><span>字幕合成</span><span class="tag tag-default" style="margin-left:auto; font-size:10px;">规划中</span></a>
+    <a class="nav-item" style="opacity:0.5; cursor:not-allowed;"><i class="ti ti-music"></i><span>音频合成</span><span class="tag tag-default" style="margin-left:auto; font-size:10px;">规划中</span></a>
   </aside>
 
   <main class="main">
@@ -1103,6 +1391,10 @@ ul, ol { list-style: none; }
         <div class="flex items-center gap-12">
           <span style="font-size:16px; font-weight:600;" class="font-mono">T20260425_000007</span>
         </div>
+        <button class="btn btn-primary" onclick="openComposeModal()" id="compose-entry-btn">
+          <i class="ti ti-movie"></i> 合成长视频
+          <span id="compose-entry-count" style="display:none; margin-left:6px; padding:0 8px; background:rgba(255,255,255,0.25); border-radius:10px; font-size:12px;"></span>
+        </button>
       </div>
       <div class="task-meta">
         <div class="task-meta-item"><span class="label">店铺:</span><span class="value">Amazon-Z01097-US</span></div>
@@ -1147,15 +1439,15 @@ ul, ol { list-style: none; }
             </div>
           </div>
 
-          <div class="seg-thumb active has-regenerating" data-seg="3" data-status="regenerating" data-ver="v3-gen">
+          <div class="seg-thumb active has-regenerating" data-seg="3" data-status="regenerating" data-ver="v4-gen">
             <div class="seg-thumb-row">
               <span class="seg-thumb-title">第 3 段 <span class="seg-time">10–15s</span></span>
             </div>
             <div class="seg-thumb-status-row">
-              <span class="tag tag-purple" style="font-size:11px; display:inline-flex; align-items:center; gap:4px;"><span class="thumb-spinner" style="color:var(--purple);"></span>v3 重做中</span>
-              <span class="text-xs text-3" style="font-size:10px; font-family:var(--font-mono);">已耗时 <span class="elapsed-timer" data-base="323" data-fmt="short">05:23</span></span>
+              <span class="tag tag-purple" style="font-size:11px; display:inline-flex; align-items:center; gap:4px;"><span class="thumb-spinner" style="color:var(--purple);"></span>v4 重做中</span>
+              <span class="text-xs text-3" style="font-size:10px; font-family:var(--font-mono);">已耗时 <span class="elapsed-timer" data-base="198" data-fmt="short">03:18</span></span>
             </div>
-            <div class="text-xs text-3" style="font-size:10px; margin-top:2px;">历史:v2 不可用,v1 不可用</div>
+            <div class="text-xs text-3" style="font-size:10px; margin-top:2px;">历史:v3 满意,v2 可用,v1 不可用</div>
           </div>
 
           <div class="seg-thumb" data-seg="4" data-status="pending" data-ver="v1">
@@ -1262,11 +1554,89 @@ ul, ol { list-style: none; }
   <div class="lightbox-counter" id="lightbox-counter">1 / 5</div>
 </div>
 
+<!-- 视频预览 Lightbox -->
+<div class="lightbox-mask" id="video-lightbox" onclick="closeVideoLightbox()">
+  <button class="lightbox-close" onclick="event.stopPropagation(); closeVideoLightbox()"><i class="ti ti-x"></i></button>
+  <div class="video-lightbox-content" onclick="event.stopPropagation()">
+    <div class="video-lightbox-player">
+      <span class="video-lightbox-time" id="video-lightbox-duration">10s</span>
+      <div class="video-lightbox-play"></div>
+      <div class="video-lightbox-bar">
+        <div class="video-lightbox-bar-fill"></div>
+      </div>
+      <div class="video-lightbox-time-overlay">00:00 / <span id="video-lightbox-total">00:10</span></div>
+    </div>
+    <div class="video-lightbox-info">
+      <div class="video-lightbox-title" id="video-lightbox-title">版本名</div>
+      <div class="video-lightbox-meta" id="video-lightbox-meta">详情</div>
+    </div>
+  </div>
+</div>
+
 <!-- 撤销 toast -->
 <div class="undo-toast" id="undo-toast">
   <div class="countdown" id="undo-countdown"></div>
   <span>已提交「<span id="undo-conclusion">满意</span>」 · 已自动跳到下一段</span>
   <button onclick="undoSubmit()">撤回</button>
+</div>
+
+<!-- 长视频合成 Modal -->
+<div class="modal-mask" id="compose-modal" style="display:none;" onclick="closeComposeModal()">
+  <div class="modal" style="width:680px; max-height:90vh; display:flex; flex-direction:column;" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span><i class="ti ti-movie" style="color:var(--brand); margin-right:6px;"></i>合成长视频</span>
+      <button class="close-btn" onclick="closeComposeModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" style="flex:1; overflow-y:auto;">
+
+      <!-- 一期说明 -->
+      <div class="card mb-12" style="background:var(--info-bg); border-color:var(--info); padding:10px 14px;">
+        <div class="flex items-start gap-8 text-xs" style="color:var(--text-2); line-height:1.7;">
+          <i class="ti ti-info-circle" style="color:var(--info); font-size:14px; margin-top:2px;"></i>
+          <span><strong>一期简易版本</strong>:目前只支持在当前任务里勾选已审核为「满意」或「可用」的版本合成。<br>同段多个已审核版本可同时选(支持复用、扩展时长),顺序自由调。二期将支持同商品跨任务合成、配字幕、配音频。</span>
+        </div>
+      </div>
+
+      <!-- 段选择 + 排序 -->
+      <div class="form-row" style="margin-bottom:12px;">
+        <div class="flex items-center justify-between mb-8" style="gap:8px; flex-wrap:wrap;">
+          <label class="form-label" style="margin-bottom:0;">选择视频片段并调整顺序<span class="text-3" style="font-weight:400; font-size:12px;">(同段多个已审核版本都可勾选,顺序可调)</span></label>
+          <div class="flex gap-8">
+            <button class="btn btn-default btn-sm" onclick="pickLatestApprovedAll(); renderSegPickList(); updatePickStats();" title="自动勾选每段最新已审核版本"><i class="ti ti-wand"></i>快速勾选最新已审</button>
+            <button class="btn btn-text-default btn-sm" onclick="clearAllPicks()" title="清空所有勾选"><i class="ti ti-eraser"></i>清空</button>
+          </div>
+        </div>
+        <div class="seg-pick-list" id="seg-pick-list"></div>
+      </div>
+
+      <!-- 已选统计 -->
+      <div class="card mb-12" style="padding:10px 14px; background:var(--bg-elevated); border:1px solid var(--border);">
+        <div class="flex items-center justify-between text-sm" style="gap:8px; flex-wrap:wrap;">
+          <span style="color:var(--text-2);">已选 <strong id="pick-count" style="color:var(--brand);">0</strong> 段 · 总时长 <strong id="pick-duration" style="color:var(--brand);">0</strong> 秒</span>
+          <span class="text-xs text-3" id="pick-hint">至少选择 1 段才能合成</span>
+        </div>
+        <div class="text-xs mt-8" id="pick-sequence" style="display:none; line-height:1.7; padding-top:8px; border-top:1px dashed var(--border); color:var(--text-1);"></div>
+      </div>
+
+      <!-- 版本名 -->
+      <div class="form-row" style="margin-bottom:12px;">
+        <label class="form-label">版本名<span class="text-3" style="font-weight:400; font-size:12px;">(可选,方便区分多个合成版本)</span></label>
+        <input class="input" id="compose-version-name" placeholder="例如:开场+卖点版">
+      </div>
+
+      <!-- 已合成版本列表 -->
+      <div class="form-row" style="margin-bottom:0;">
+        <label class="form-label">已合成版本<span class="text-3" style="font-weight:400; font-size:12px;" id="compose-versions-count">(0 个)</span></label>
+        <div class="composed-list" id="composed-list"></div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <div style="flex:1;"></div>
+      <button class="btn btn-default" onclick="closeComposeModal()">取消</button>
+      <button class="btn btn-primary" id="compose-submit-btn" onclick="submitCompose()" disabled><i class="ti ti-send"></i> 提交合成任务</button>
+    </div>
+  </div>
 </div>
 
 <!-- 重做 Modal -->
@@ -1333,8 +1703,9 @@ const segData = {
   3: {
     versions: [
       { v: 1, subTaskId: 'S20260425_000003', status: 'unusable', conclusion: '不可用', note: '陶瓷光泽感不够,且镜头下移过快,关键的元宝造型一闪而过看不清。', prompt: '进入细节特写,镜头沿马身缓慢下移,展示鞍饰、底座纹样、元宝造型……', videoBg: 'v1', generatedAt: '2026-04-25 14:44:10', elapsed: 635 },
-      { v: 2, subTaskId: 'S20260425_000007', status: 'unusable', conclusion: '不可用', note: 'v2 重做后整体更稳,但底座纹样仍不够清晰,商品一致性有偏差。', prompt: '进入细节特写,镜头沿马身缓慢下移,放慢节奏,展示鞍饰、底座纹样、元宝造型和周围装饰起伏,强调陶瓷材质的光泽感与完整做工;通过反光和细节稳定呈现其颜色与亮泽长久保持的质感。', videoBg: 'v3', generatedAt: '2026-04-25 14:48:22', elapsed: 458 },
-      { v: 3, subTaskId: 'S20260425_000009', status: 'regenerating', prompt: '细节特写,镜头沿马身极慢下移,清晰呈现鞍饰、底座纹样和元宝造型,光线反射强化陶瓷光泽,整体节奏舒缓稳定。', elapsedBaseSec: 323 }
+      { v: 2, subTaskId: 'S20260425_000007', status: 'usable', conclusion: '可用', note: 'v2 重做后整体更稳,镜头沿马身下移的节奏合理,但底座纹样还略糊,可以接受。', prompt: '进入细节特写,镜头沿马身缓慢下移,放慢节奏,展示鞍饰、底座纹样、元宝造型和周围装饰起伏,强调陶瓷材质的光泽感与完整做工;通过反光和细节稳定呈现其颜色与亮泽长久保持的质感。', videoBg: 'v3', generatedAt: '2026-04-25 14:48:22', elapsed: 458 },
+      { v: 3, subTaskId: 'S20260425_000009', status: 'satisfied', conclusion: '满意', note: 'v3 镜头节奏舒缓稳定,鞍饰、底座纹样和元宝造型都清晰呈现,陶瓷光泽强化得很到位,质感出来了。', prompt: '细节特写,镜头沿马身极慢下移,清晰呈现鞍饰、底座纹样和元宝造型,光线反射强化陶瓷光泽,整体节奏舒缓稳定。', videoBg: 'v3', generatedAt: '2026-04-25 14:55:48', elapsed: 412 },
+      { v: 4, subTaskId: 'S20260425_000010', status: 'regenerating', prompt: '细节特写,镜头沿马身缓慢下移,聚焦元宝造型与鞍饰纹样,光线柔和强化陶瓷质感,补充少量空气感。', elapsedBaseSec: 198 }
     ]
   },
   4: {
@@ -1939,11 +2310,19 @@ function lightboxNext() {
 
 // Lightbox 键盘支持
 document.addEventListener('keydown', (e) => {
+  // 图片 lightbox
   const lb = document.getElementById('lightbox');
-  if (!lb || !lb.classList.contains('show')) return;
-  if (e.key === 'Escape') closeLightbox();
-  if (e.key === 'ArrowLeft') lightboxPrev();
-  if (e.key === 'ArrowRight') lightboxNext();
+  if (lb && lb.classList.contains('show')) {
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') lightboxPrev();
+    if (e.key === 'ArrowRight') lightboxNext();
+    return;
+  }
+  // 视频 lightbox
+  const vlb = document.getElementById('video-lightbox');
+  if (vlb && vlb.classList.contains('show')) {
+    if (e.key === 'Escape') closeVideoLightbox();
+  }
 });
 
 // ============================================================
@@ -1966,6 +2345,350 @@ setInterval(tickElapsed, 1000);
 // ============================================================
 renderCurrentSeg(3);
 switchImg(0);
+
+// ============================================================
+// 长视频合成 — 选段 / 排序 / 异步任务列表
+// ============================================================
+
+// 已合成版本数据(演示数据:1 个完成 + 1 个合成中)
+const composedVersions = [
+  {
+    id: 'C20260425_000001',
+    name: '默认全段版',
+    picks: [
+      { seg: 1, ver: 1, subTaskId: 'S20260425_000001' },
+      { seg: 2, ver: 1, subTaskId: 'S20260425_000002' }
+    ],
+    duration: 10,
+    status: 'success',
+    createdAt: '2026-04-25 14:50:18',
+    composedSec: 18,
+    fileSize: '2.3 MB',
+    downloadUrl: '#'
+  },
+  {
+    id: 'C20260425_000002',
+    name: '简版试合成',
+    picks: [
+      { seg: 1, ver: 1, subTaskId: 'S20260425_000001' }
+    ],
+    duration: 5,
+    status: 'composing',
+    createdAt: '2026-04-25 14:58:12',
+    elapsedBaseSec: 23
+  }
+];
+
+// 当前 Modal 里的勾选状态
+// _pickedList: 数组,按勾选顺序记录 { seg, ver, subTaskId } 三元组
+// 每个版本可独立勾选(允许同段多版本同时选)
+let _pickedList = [];
+
+// 判断版本是否被勾选
+function isVerPicked(seg, ver) {
+  return _pickedList.findIndex(p => p.seg === seg && p.ver === ver) !== -1;
+}
+
+// 获取版本顺序号(1-indexed),没勾选返回 0
+function getVerOrder(seg, ver) {
+  const idx = _pickedList.findIndex(p => p.seg === seg && p.ver === ver);
+  return idx === -1 ? 0 : idx + 1;
+}
+
+// 打开 Modal — 自动勾选每段最新已审核版本
+function openComposeModal() {
+  _pickedList = [];
+  pickLatestApprovedAll();
+  document.getElementById('compose-version-name').value = '';
+  renderSegPickList();
+  renderComposedList();
+  updatePickStats();
+  document.getElementById('compose-modal').style.display = 'flex';
+}
+
+// 自动勾选每段最新已审核版本(满意/可用)
+function pickLatestApprovedAll() {
+  _pickedList = [];
+  for (let seg = 1; seg <= 6; seg++) {
+    const data = segData[seg];
+    if (!data) continue;
+    // 倒序找最新一个 satisfied / usable 版本
+    for (let i = data.versions.length - 1; i >= 0; i--) {
+      const v = data.versions[i];
+      if (v.status === 'satisfied' || v.status === 'usable') {
+        _pickedList.push({ seg: seg, ver: v.v, subTaskId: v.subTaskId });
+        break;
+      }
+    }
+  }
+}
+
+// 清空所有勾选
+function clearAllPicks() {
+  _pickedList = [];
+  renderSegPickList();
+  updatePickStats();
+}
+
+function closeComposeModal() {
+  document.getElementById('compose-modal').style.display = 'none';
+}
+
+// 渲染段+版本选择列表
+function renderSegPickList() {
+  const html = [1, 2, 3, 4, 5, 6].map(seg => {
+    const data = segData[seg];
+    if (!data) return '';
+    const segRange = `${(seg - 1) * 5}–${seg * 5}s`;
+
+    // 段标题行
+    const segHeader = `
+      <div class="seg-pick-group-header">
+        <span class="seg-pick-no">第 ${seg} 段</span>
+        <span class="seg-pick-time">${segRange}</span>
+      </div>
+    `;
+
+    // 渲染该段所有版本
+    const versionRows = data.versions.map(v => {
+      const isPickable = (v.status === 'satisfied' || v.status === 'usable');
+      const isPicked = isVerPicked(seg, v.v);
+      const order = getVerOrder(seg, v.v);
+
+      // 状态标签
+      let statusTag;
+      if (v.status === 'satisfied') {
+        statusTag = `<span class="seg-pick-status-tag" style="background:var(--success-bg); color:var(--success);">满意</span>`;
+      } else if (v.status === 'usable') {
+        statusTag = `<span class="seg-pick-status-tag" style="background:var(--info-bg); color:var(--info);">可用</span>`;
+      } else if (v.status === 'unusable') {
+        statusTag = `<span class="seg-pick-status-tag" style="background:var(--danger-bg); color:var(--danger);">不可用</span>`;
+      } else if (v.status === 'pending') {
+        statusTag = `<span class="seg-pick-status-tag" style="background:var(--bg-active); color:var(--text-3);">待审核</span>`;
+      } else if (v.status === 'failed') {
+        statusTag = `<span class="seg-pick-status-tag" style="background:var(--danger-bg); color:var(--danger);">失败</span>`;
+      } else if (v.status === 'regenerating') {
+        statusTag = `<span class="seg-pick-status-tag" style="background:rgba(114,46,209,0.15); color:var(--purple);">生成中</span>`;
+      } else {
+        statusTag = `<span class="seg-pick-status-tag" style="background:var(--bg-active); color:var(--text-3);">${v.status}</span>`;
+      }
+
+      const orderBadge = isPicked ? `<span class="seg-pick-order">${order}</span>` : '';
+
+      // 排序按钮:仅勾选状态可用
+      let arrows = '';
+      if (isPicked) {
+        const idx = _pickedList.findIndex(p => p.seg === seg && p.ver === v.v);
+        const isFirst = idx === 0;
+        const isLast = idx === _pickedList.length - 1;
+        arrows = `
+          <div class="seg-pick-actions">
+            <button class="seg-pick-arrow" onclick="movePickItem(${seg}, ${v.v}, -1)" ${isFirst ? 'disabled' : ''} title="上移"><i class="ti ti-arrow-up"></i></button>
+            <button class="seg-pick-arrow" onclick="movePickItem(${seg}, ${v.v}, 1)" ${isLast ? 'disabled' : ''} title="下移"><i class="ti ti-arrow-down"></i></button>
+          </div>
+        `;
+      }
+
+      const itemCls = !isPickable ? 'seg-pick-item ver disabled' : (isPicked ? 'seg-pick-item ver checked' : 'seg-pick-item ver');
+
+      return `
+        <div class="${itemCls}">
+          <input type="checkbox" class="seg-pick-checkbox" ${isPicked ? 'checked' : ''} ${!isPickable ? 'disabled' : ''} onchange="togglePickVer(${seg}, ${v.v})">
+          <div class="seg-pick-info">
+            <span class="seg-pick-ver-label">v${v.v}</span>
+            ${statusTag}
+          </div>
+          ${orderBadge}
+          ${arrows}
+        </div>
+      `;
+    }).join('');
+
+    return segHeader + versionRows;
+  }).join('');
+  document.getElementById('seg-pick-list').innerHTML = html;
+}
+
+// 切换版本勾选
+function togglePickVer(seg, ver) {
+  const data = segData[seg];
+  const v = data.versions.find(x => x.v === ver);
+  if (!v) return;
+  const idx = _pickedList.findIndex(p => p.seg === seg && p.ver === ver);
+  if (idx !== -1) {
+    _pickedList.splice(idx, 1);
+  } else {
+    _pickedList.push({ seg: seg, ver: ver, subTaskId: v.subTaskId });
+  }
+  renderSegPickList();
+  updatePickStats();
+}
+
+// 移动版本顺序
+function movePickItem(seg, ver, delta) {
+  const idx = _pickedList.findIndex(p => p.seg === seg && p.ver === ver);
+  if (idx < 0) return;
+  const newIdx = idx + delta;
+  if (newIdx < 0 || newIdx >= _pickedList.length) return;
+  [_pickedList[idx], _pickedList[newIdx]] = [_pickedList[newIdx], _pickedList[idx]];
+  renderSegPickList();
+}
+
+// 更新已选统计 + 描述文案
+function updatePickStats() {
+  const count = _pickedList.length;
+  const duration = count * 5;
+  document.getElementById('pick-count').textContent = count;
+  document.getElementById('pick-duration').textContent = duration;
+  const hint = document.getElementById('pick-hint');
+  const submitBtn = document.getElementById('compose-submit-btn');
+  const sequenceEl = document.getElementById('pick-sequence');
+
+  if (count === 0) {
+    hint.textContent = '至少选择 1 段才能合成';
+    hint.style.color = 'var(--text-3)';
+    submitBtn.disabled = true;
+    sequenceEl.style.display = 'none';
+  } else {
+    hint.textContent = `合成后视频时长 ${duration} 秒`;
+    hint.style.color = 'var(--brand)';
+    submitBtn.disabled = false;
+    // 显示拼接顺序
+    const seqText = _pickedList.map((p, i) => `(${i+1}) 第${p.seg}段 v${p.ver}`).join('  →  ');
+    sequenceEl.innerHTML = '<span style="color:var(--text-3);">拼接顺序:</span> ' + seqText;
+    sequenceEl.style.display = 'block';
+  }
+}
+
+// 渲染已合成版本列表
+function renderComposedList() {
+  const list = document.getElementById('composed-list');
+  document.getElementById('compose-versions-count').textContent = `(${composedVersions.length} 个)`;
+
+  if (composedVersions.length === 0) {
+    list.innerHTML = '<div class="composed-list-empty">还没有已合成的版本,选择段并点击下方"提交合成任务"开始</div>';
+    return;
+  }
+
+  list.innerHTML = composedVersions.map(v => {
+    const segs = v.picks.map(p => `第${p.seg}段 v${p.ver}`).join(' + ');
+    let icon, statusBadge, actions;
+
+    if (v.status === 'success') {
+      icon = '<i class="ti ti-circle-check-filled"></i>';
+      statusBadge = `<span class="seg-pick-status-tag" style="background:var(--success-bg); color:var(--success);">合成成功</span>`;
+      actions = `
+        <button class="btn btn-default btn-sm" onclick="previewComposed('${v.id}')"><i class="ti ti-eye"></i>预览</button>
+        <button class="btn btn-default btn-sm" onclick="downloadComposed('${v.id}')"><i class="ti ti-download"></i>下载</button>
+      `;
+    } else if (v.status === 'composing') {
+      icon = '<span class="thumb-spinner" style="border-color:rgba(114,46,209,0.3); border-top-color:var(--purple); width:18px; height:18px; border-width:2px;"></span>';
+      statusBadge = `<span class="seg-pick-status-tag" style="background:rgba(114,46,209,0.15); color:var(--purple);">合成中</span>`;
+      actions = '';
+    } else {
+      icon = '<i class="ti ti-alert-triangle"></i>';
+      statusBadge = `<span class="seg-pick-status-tag" style="background:var(--danger-bg); color:var(--danger);">合成失败</span>`;
+      actions = `<button class="btn btn-default btn-sm" onclick="retryCompose('${v.id}')"><i class="ti ti-refresh"></i>重试</button>`;
+    }
+
+    let metaText;
+    if (v.status === 'composing') {
+      metaText = `${v.id} · 已耗时 <span class="elapsed-timer" data-base="${v.elapsedBaseSec}" data-fmt="long">${formatElapsedLong(v.elapsedBaseSec)}</span> · ${v.createdAt}`;
+    } else if (v.status === 'success') {
+      metaText = `${v.id} · 合成耗时 ${formatElapsed(v.composedSec)} · ${v.fileSize} · ${v.createdAt}`;
+    } else {
+      metaText = `${v.id} · ${v.createdAt}`;
+    }
+
+    return `
+      <div class="composed-item ${v.status === 'composing' ? 'composing' : v.status === 'failed' ? 'failed' : ''}">
+        <div class="composed-item-icon">${icon}</div>
+        <div class="composed-item-info">
+          <div class="composed-item-name">
+            <span>${v.name || '(未命名)'}</span>
+            ${statusBadge}
+            <span class="text-3" style="font-size:11px; font-weight:400;">${segs} · ${v.duration}s</span>
+          </div>
+          <div class="composed-item-meta">${metaText}</div>
+        </div>
+        <div class="composed-item-actions">${actions}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// 提交合成任务(异步)
+function submitCompose() {
+  if (_pickedList.length === 0) return;
+  const name = document.getElementById('compose-version-name').value.trim() || '未命名';
+
+  const nextNum = String(composedVersions.length + 1).padStart(6, '0');
+  const newId = 'C20260425_' + nextNum;
+
+  const now = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  const nowStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+
+  composedVersions.push({
+    id: newId,
+    name: name,
+    picks: [..._pickedList],
+    duration: _pickedList.length * 5,
+    status: 'composing',
+    createdAt: nowStr,
+    elapsedBaseSec: 0
+  });
+
+  renderComposedList();
+  updateComposeEntryButton();
+
+  showCopyToast('已提交合成任务 ' + newId);
+  setTimeout(() => closeComposeModal(), 800);
+}
+
+function downloadComposed(id) {
+  const v = composedVersions.find(x => x.id === id);
+  if (!v) return;
+  showCopyToast('已开始下载 ai-video-' + id + '.mp4(' + v.fileSize + ')');
+}
+
+// 在线预览合成视频(模拟播放器)
+function previewComposed(id) {
+  const v = composedVersions.find(x => x.id === id);
+  if (!v) return;
+  const segs = v.picks.map(p => `第${p.seg}段 v${p.ver}`).join(' + ');
+  const durationStr = String(Math.floor(v.duration / 60)).padStart(2, '0') + ':' + String(v.duration % 60).padStart(2, '0');
+
+  document.getElementById('video-lightbox-title').textContent = v.name || '(未命名)';
+  document.getElementById('video-lightbox-meta').innerHTML = `${v.id} · ${segs} · ${v.duration}s · ${v.fileSize || '—'} · ${v.createdAt}`;
+  document.getElementById('video-lightbox-duration').textContent = v.duration + 's';
+  document.getElementById('video-lightbox-total').textContent = durationStr;
+  document.getElementById('video-lightbox').classList.add('show');
+}
+
+function closeVideoLightbox() {
+  document.getElementById('video-lightbox').classList.remove('show');
+}
+
+function retryCompose(id) {
+  const v = composedVersions.find(x => x.id === id);
+  if (!v) return;
+  v.status = 'composing';
+  v.elapsedBaseSec = 0;
+  renderComposedList();
+}
+
+function updateComposeEntryButton() {
+  const countEl = document.getElementById('compose-entry-count');
+  if (composedVersions.length > 0) {
+    countEl.textContent = composedVersions.length + ' 版本';
+    countEl.style.display = 'inline-block';
+  } else {
+    countEl.style.display = 'none';
+  }
+}
+
+updateComposeEntryButton();
 
 // 点击外部关闭所有打开的下拉(用户菜单等基于 <details> 的)
 document.addEventListener('click', (e) => {
