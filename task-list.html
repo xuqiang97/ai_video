@@ -555,6 +555,22 @@ ul, ol { list-style: none; }
   font-weight: 600;
   color: var(--text-1);
 }
+.task-creator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  background: var(--bg-active);
+  color: var(--text-3);
+  font-weight: 500;
+}
+.task-creator .ti { font-size: 12px; }
+.task-creator.me {
+  background: var(--brand-bg);
+  color: var(--brand);
+}
 .task-meta {
   display: flex;
   align-items: center;
@@ -850,6 +866,14 @@ ul, ol { list-style: none; }
       </div>
 
       <div class="filter-row">
+        <select class="filter-input" style="min-width:140px;">
+          <option>创建人(全部)</option>
+          <option>👤 我创建的</option>
+          <option disabled>──────────</option>
+          <option>张燕霞</option>
+          <option>李文博</option>
+          <option>赵审核</option>
+        </select>
         <input class="filter-input" placeholder="店铺(全部)" style="min-width:180px;">
         <input class="filter-input" placeholder="🔍 TaskID 或 ASIN 搜索" style="min-width:240px;">
         <select class="filter-input" style="min-width:160px;">
@@ -915,6 +939,7 @@ ul, ol { list-style: none; }
         <div class="task-info">
           <div class="task-info-row1">
             <span class="task-id">T20260425_000012</span>
+            <span class="task-creator me" title="我创建的"><i class="ti ti-user"></i>王运营 · 我</span>
           </div>
           <div class="task-meta">
             <span>Amazon-Z01097-US</span>
@@ -954,6 +979,7 @@ ul, ol { list-style: none; }
         <div class="task-info">
           <div class="task-info-row1">
             <span class="task-id">T20260425_000007</span>
+            <span class="task-creator me" title="我创建的"><i class="ti ti-user"></i>王运营 · 我</span>
           </div>
           <div class="task-meta">
             <span>Amazon-Z01097-US</span>
@@ -993,6 +1019,7 @@ ul, ol { list-style: none; }
         <div class="task-info">
           <div class="task-info-row1">
             <span class="task-id">T20260425_000005</span>
+            <span class="task-creator" title="同事创建,你只能查看"><i class="ti ti-user"></i>张燕霞</span>
           </div>
           <div class="task-meta">
             <span>Amazon-Z01112-US</span>
@@ -1029,6 +1056,7 @@ ul, ol { list-style: none; }
         <div class="task-info">
           <div class="task-info-row1">
             <span class="task-id">T20260425_000003</span>
+            <span class="task-creator me" title="我创建的"><i class="ti ti-user"></i>王运营 · 我</span>
           </div>
           <div class="task-meta">
             <span>Amazon-Z01097-US</span>
@@ -1074,6 +1102,7 @@ ul, ol { list-style: none; }
         <div class="task-info">
           <div class="task-info-row1">
             <span class="task-id">T20260425_000011</span>
+            <span class="task-creator" title="同事创建,你只能查看"><i class="ti ti-user"></i>李文博</span>
           </div>
           <div class="task-meta">
             <span>Amazon-Z01097-US</span>
@@ -1113,6 +1142,7 @@ ul, ol { list-style: none; }
         <div class="task-info">
           <div class="task-info-row1">
             <span class="task-id">T20260425_000002</span>
+            <span class="task-creator me" title="我创建的"><i class="ti ti-user"></i>王运营 · 我</span>
           </div>
           <div class="task-meta">
             <span>Amazon-Z01097-US</span>
@@ -1152,6 +1182,7 @@ ul, ol { list-style: none; }
         <div class="task-info">
           <div class="task-info-row1">
             <span class="task-id">T20260424_000089</span>
+            <span class="task-creator" title="同事创建,你只能查看"><i class="ti ti-user"></i>张燕霞</span>
           </div>
           <div class="task-meta">
             <span>Amazon-Z01112-US</span>
@@ -1186,6 +1217,7 @@ ul, ol { list-style: none; }
         <div class="task-info">
           <div class="task-info-row1">
             <span class="task-id">T20260424_000076</span>
+            <span class="task-creator me" title="我创建的"><i class="ti ti-user"></i>王运营 · 我</span>
           </div>
           <div class="task-meta">
             <span>Amazon-Z01097-US</span>
