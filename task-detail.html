@@ -734,6 +734,31 @@ ul, ol { list-style: none; }
 }
 
 /* ========== 长视频合成 Modal ========== */
+.compose-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+}
+.compose-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 18px;
+  padding: 0 7px;
+  border-radius: 9px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  background: rgba(255,255,255,0.22);
+  color: white;
+}
+.compose-badge .ti { font-size: 11px; }
+.compose-badge.composing .mini-spinner {
+  width: 9px; height: 9px;
+  border-width: 1.5px;
+}
+.compose-badge.failed { background: rgba(245,63,63,0.45); }
 .seg-pick-list {
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -1393,7 +1418,7 @@ ul, ol { list-style: none; }
         </div>
         <button class="btn btn-primary" onclick="openComposeModal()" id="compose-entry-btn">
           <i class="ti ti-movie"></i> 合成长视频
-          <span id="compose-entry-count" style="display:none; margin-left:6px; padding:0 8px; background:rgba(255,255,255,0.25); border-radius:10px; font-size:12px;"></span>
+          <span class="compose-badges" id="compose-badges"></span>
         </button>
       </div>
       <div class="task-meta">
@@ -1567,8 +1592,15 @@ ul, ol { list-style: none; }
       <div class="video-lightbox-time-overlay">00:00 / <span id="video-lightbox-total">00:10</span></div>
     </div>
     <div class="video-lightbox-info">
-      <div class="video-lightbox-title" id="video-lightbox-title">版本名</div>
-      <div class="video-lightbox-meta" id="video-lightbox-meta">详情</div>
+      <div class="flex items-start justify-between gap-12" style="flex-wrap:wrap;">
+        <div style="flex:1; min-width:0;">
+          <div class="video-lightbox-title" id="video-lightbox-title">版本名</div>
+          <div class="video-lightbox-meta" id="video-lightbox-meta">详情</div>
+        </div>
+        <button class="btn btn-default btn-sm" id="video-lightbox-download" onclick="downloadFromLightbox()" style="flex-shrink:0;">
+          <i class="ti ti-download"></i> 下载
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -1633,7 +1665,7 @@ ul, ol { list-style: none; }
     </div>
     <div class="modal-footer">
       <div style="flex:1;"></div>
-      <button class="btn btn-default" onclick="closeComposeModal()">取消</button>
+      <button class="btn btn-default" onclick="closeComposeModal()">关闭</button>
       <button class="btn btn-primary" id="compose-submit-btn" onclick="submitCompose()" disabled><i class="ti ti-send"></i> 提交合成任务</button>
     </div>
   </div>
@@ -2362,7 +2394,7 @@ const composedVersions = [
     duration: 10,
     status: 'success',
     createdAt: '2026-04-25 14:50:18',
-    composedSec: 18,
+    composedSec: 378,
     fileSize: '2.3 MB',
     downloadUrl: '#'
   },
@@ -2643,7 +2675,11 @@ function submitCompose() {
   updateComposeEntryButton();
 
   showCopyToast('已提交合成任务 ' + newId);
-  setTimeout(() => closeComposeModal(), 800);
+  // 提交后保留 Modal 打开,清空当前选择和版本名,业务可继续提交其他版本
+  _pickedList = [];
+  document.getElementById('compose-version-name').value = '';
+  renderSegPickList();
+  updatePickStats();
 }
 
 function downloadComposed(id) {
@@ -2653,9 +2689,11 @@ function downloadComposed(id) {
 }
 
 // 在线预览合成视频(模拟播放器)
+let _previewingComposedId = null;
 function previewComposed(id) {
   const v = composedVersions.find(x => x.id === id);
   if (!v) return;
+  _previewingComposedId = id;
   const segs = v.picks.map(p => `第${p.seg}段 v${p.ver}`).join(' + ');
   const durationStr = String(Math.floor(v.duration / 60)).padStart(2, '0') + ':' + String(v.duration % 60).padStart(2, '0');
 
@@ -2668,6 +2706,12 @@ function previewComposed(id) {
 
 function closeVideoLightbox() {
   document.getElementById('video-lightbox').classList.remove('show');
+  _previewingComposedId = null;
+}
+
+// 从预览弹窗里直接下载当前版本
+function downloadFromLightbox() {
+  if (_previewingComposedId) downloadComposed(_previewingComposedId);
 }
 
 function retryCompose(id) {
@@ -2679,13 +2723,22 @@ function retryCompose(id) {
 }
 
 function updateComposeEntryButton() {
-  const countEl = document.getElementById('compose-entry-count');
-  if (composedVersions.length > 0) {
-    countEl.textContent = composedVersions.length + ' 版本';
-    countEl.style.display = 'inline-block';
-  } else {
-    countEl.style.display = 'none';
+  const badgesEl = document.getElementById('compose-badges');
+  const successCount = composedVersions.filter(v => v.status === 'success').length;
+  const composingCount = composedVersions.filter(v => v.status === 'composing').length;
+  const failedCount = composedVersions.filter(v => v.status === 'failed').length;
+
+  let html = '';
+  if (successCount > 0) {
+    html += `<span class="compose-badge success"><i class="ti ti-check"></i>${successCount}</span>`;
   }
+  if (composingCount > 0) {
+    html += `<span class="compose-badge composing"><span class="mini-spinner"></span>${composingCount}</span>`;
+  }
+  if (failedCount > 0) {
+    html += `<span class="compose-badge failed"><i class="ti ti-alert-triangle"></i>${failedCount}</span>`;
+  }
+  badgesEl.innerHTML = html;
 }
 
 updateComposeEntryButton();
