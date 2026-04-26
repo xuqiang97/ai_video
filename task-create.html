@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>新建生成任务 - AI 商品视频系统</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<style>
+/* ========== 设计令牌 ========== */
+:root {
+  --bg: #F7F8FA;
+  --bg-elevated: #FFFFFF;
+  --bg-hover: #F2F3F5;
+  --bg-active: #E5E6EB;
+  --border: #E5E6EB;
+  --border-strong: #C9CDD4;
+  --text-1: #1D2129;
+  --text-2: #4E5969;
+  --text-3: #86909C;
+  --text-4: #C9CDD4;
+  --brand: #00B96B;
+  --brand-hover: #00A05E;
+  --brand-active: #008A50;
+  --brand-bg: #E8F8F0;
+  --info: #165DFF;
+  --info-bg: #E8F3FF;
+  --success: #00B42A;
+  --success-bg: #E8FFEA;
+  --warning: #FF7D00;
+  --warning-bg: #FFF7E8;
+  --danger: #F53F3F;
+  --danger-bg: #FFECE8;
+  --purple: #722ED1;
+  --purple-bg: #F5E8FF;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.08);
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "SF Mono", "Monaco", "Consolas", monospace;
+  --sidebar-w: 208px;
+  --topbar-h: 56px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-1);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input, textarea, select { font-family: inherit; font-size: inherit; }
+ul, ol { list-style: none; }
+
+/* ========== 布局壳 ========== */
+.app {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  grid-template-rows: var(--topbar-h) 1fr;
+  grid-template-areas: "topbar topbar" "sidebar main";
+  height: 100vh;
+}
+.topbar {
+  grid-area: topbar;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 16px;
+}
+.topbar .logo {
+  display: flex; align-items: center; gap: 8px;
+  font-weight: 600; font-size: 15px; color: var(--text-1);
+}
+.topbar .logo-mark {
+  width: 28px; height: 28px;
+  background: linear-gradient(135deg, var(--brand) 0%, #00D982 100%);
+  border-radius: var(--radius);
+  display: grid; place-items: center;
+  color: white; font-weight: 700; font-size: 14px;
+}
+.topbar .spacer { flex: 1; }
+.topbar .user {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--text-2);
+  padding: 4px 8px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.topbar .user::-webkit-details-marker { display: none; }
+.topbar .user:hover { background: var(--bg-hover); }
+.topbar .avatar {
+  width: 28px; height: 28px;
+  background: var(--brand-bg);
+  color: var(--brand);
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-weight: 600; font-size: 12px;
+}
+
+/* 用户下拉菜单 */
+.user-menu {
+  position: relative;
+  display: inline-block;
+}
+.user-menu-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 200px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  z-index: 100;
+  padding: 4px;
+  overflow: hidden;
+}
+.user-menu-info {
+  padding: 10px 12px;
+}
+.user-menu-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-1);
+  margin-bottom: 2px;
+}
+.user-menu-account {
+  font-size: 12px;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+}
+.user-menu-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0 -4px;
+}
+.user-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  font-size: 13px;
+  color: var(--text-1);
+  border-radius: var(--radius);
+  cursor: pointer;
+  margin: 4px 0;
+  transition: background 0.15s;
+}
+.user-menu-item:hover {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+.user-menu-item .ti {
+  font-size: 16px;
+}
+
+.sidebar {
+  grid-area: sidebar;
+  background: var(--bg-elevated);
+  border-right: 1px solid var(--border);
+  padding: 12px 8px;
+  overflow-y: auto;
+}
+.nav-group-title {
+  font-size: 12px;
+  color: var(--text-3);
+  padding: 12px 12px 6px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  color: var(--text-2);
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 2px;
+  transition: background 0.15s;
+}
+.nav-item:hover { background: var(--bg-hover); color: var(--text-1); }
+.nav-item.active {
+  background: var(--brand-bg);
+  color: var(--brand);
+  font-weight: 500;
+}
+.nav-item .ti { font-size: 18px; }
+
+.main {
+  grid-area: main;
+  overflow-y: auto;
+  padding: 20px 24px;
+}
+
+/* ========== 通用组件 ========== */
+.page-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.page-title {
+  font-size: 20px; font-weight: 600; color: var(--text-1);
+}
+.page-subtitle {
+  font-size: 13px; color: var(--text-3); margin-top: 4px;
+}
+.breadcrumb {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--text-3); margin-bottom: 12px;
+}
+.breadcrumb a:hover { color: var(--brand); }
+.breadcrumb .sep { color: var(--text-4); }
+.breadcrumb .current { color: var(--text-2); }
+
+.card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+}
+.card-padded { padding: 20px; }
+.card-section + .card-section,
+.card .card-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+.card-title {
+  font-size: 14px; font-weight: 600; color: var(--text-1);
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.card-title .hint { font-size: 12px; color: var(--text-3); font-weight: 400; }
+
+/* 帮助文档超链接 */
+.help-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--brand);
+  font-weight: 400;
+  padding: 2px 8px;
+  border-radius: 4px;
+  transition: all 0.15s;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.help-link:hover {
+  background: var(--brand-bg);
+  text-decoration: underline;
+}
+.help-link .ti {
+  font-size: 13px;
+}
+
+/* 按钮 */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  height: 32px;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.btn .ti { font-size: 16px; }
+.btn-primary { background: var(--brand); color: white; }
+.btn-primary:hover { background: var(--brand-hover); }
+.btn-default {
+  background: var(--bg-elevated);
+  border-color: var(--border);
+  color: var(--text-1);
+}
+.btn-default:hover { border-color: var(--brand); color: var(--brand); }
+.btn-text {
+  color: var(--brand);
+  padding: 4px 8px;
+  height: 28px;
+}
+.btn-text:hover { background: var(--brand-bg); }
+.btn-text-default {
+  color: var(--text-2);
+  padding: 4px 8px;
+  height: 28px;
+}
+.btn-text-default:hover { background: var(--bg-hover); color: var(--text-1); }
+.btn-lg { height: 36px; padding: 8px 18px; }
+.btn-sm { height: 28px; padding: 4px 10px; font-size: 13px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Tag */
+.tag {
+  display: inline-flex; align-items: center;
+  padding: 1px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  line-height: 20px;
+  font-weight: 500;
+}
+.tag-default { background: var(--bg-active); color: var(--text-2); }
+.tag-info { background: var(--info-bg); color: var(--info); }
+.tag-success { background: var(--success-bg); color: var(--success); }
+.tag-warning { background: var(--warning-bg); color: var(--warning); }
+.tag-danger { background: var(--danger-bg); color: var(--danger); }
+.tag-brand { background: var(--brand-bg); color: var(--brand); }
+
+/* 表单 */
+.form-row { margin-bottom: 16px; }
+.form-row-inline { display: flex; gap: 16px; }
+.form-row-inline > .form-row { flex: 1; margin-bottom: 16px; }
+.form-label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-2);
+  margin-bottom: 6px;
+}
+.form-label .required { color: var(--danger); margin-left: 2px; }
+.input, .textarea, .select {
+  width: 100%;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+  color: var(--text-1);
+  outline: none;
+  transition: border 0.15s;
+  height: 32px;
+}
+.textarea { height: auto; padding: 8px 12px; resize: vertical; min-height: 64px; line-height: 1.6; }
+.input:focus, .textarea:focus, .select:focus { border-color: var(--brand); }
+.input::placeholder, .textarea::placeholder { color: var(--text-4); }
+.form-hint { font-size: 12px; color: var(--text-3); margin-top: 4px; }
+
+/* Wizard 步骤条 */
+.steps {
+  display: flex;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 24px;
+  margin-bottom: 16px;
+}
+.step {
+  display: flex; align-items: center; gap: 8px;
+  flex: 1;
+  position: relative;
+  cursor: pointer;
+}
+.step:not(:last-child)::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+  margin-left: 12px;
+  margin-right: 12px;
+}
+.step-num {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--bg-active);
+  color: var(--text-3);
+  display: grid; place-items: center;
+  font-size: 12px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.step.done .step-num { background: var(--brand); color: white; }
+.step.active .step-num {
+  background: var(--brand);
+  color: white;
+  box-shadow: 0 0 0 4px var(--brand-bg);
+}
+.step-label { font-size: 13px; color: var(--text-3); white-space: nowrap; }
+.step.done .step-label { color: var(--text-2); }
+.step.active .step-label { color: var(--brand); font-weight: 500; }
+
+/* 数据描述列表 */
+.descriptions {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 16px;
+  row-gap: 8px;
+  font-size: 13px;
+}
+.descriptions dt { color: var(--text-3); }
+.descriptions dd { color: var(--text-1); }
+
+/* 商品图占位 */
+.product-image {
+  width: 96px; height: 96px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, #f0d68a, #d4a045);
+  flex-shrink: 0;
+  display: grid; place-items: center;
+  color: rgba(0,0,0,0.4);
+  font-size: 32px;
+}
+
+/* 工具类 */
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-4 { gap: 4px; } .gap-6 { gap: 6px; } .gap-8 { gap: 8px; } .gap-12 { gap: 12px; } .gap-16 { gap: 16px; }
+.mt-4 { margin-top: 4px; } .mt-8 { margin-top: 8px; } .mt-12 { margin-top: 12px; } .mt-16 { margin-top: 16px; }
+.mb-4 { margin-bottom: 4px; } .mb-8 { margin-bottom: 8px; } .mb-12 { margin-bottom: 12px; } .mb-16 { margin-bottom: 16px; }
+.text-1 { color: var(--text-1); } .text-2 { color: var(--text-2); } .text-3 { color: var(--text-3); }
+.text-xs { font-size: 12px; } .text-sm { font-size: 13px; } .text-md { font-size: 14px; }
+.font-mono { font-family: var(--font-mono); }
+.font-medium { font-weight: 500; } .font-semibold { font-weight: 600; }
+.flex-1 { flex: 1; }
+
+/* 滚动条 */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+
+/* ========== 本页特有 ========== */
+.quota-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 4px 12px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.quota-chip:hover { border-color: var(--brand); }
+.quota-chip .quota-label { color: var(--text-3); font-size: 12px; }
+.quota-chip .quota-value { color: var(--text-1); font-weight: 600; font-family: var(--font-mono); }
+.quota-chip .quota-tag {
+  background: var(--bg-elevated);
+  color: var(--text-2);
+  font-size: 11px;
+  padding: 0 6px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+}
+.quota-chip .refresh-btn {
+  display: grid; place-items: center;
+  width: 22px; height: 22px;
+  color: var(--text-3);
+  border-radius: 50%;
+  margin-left: 2px;
+}
+.quota-chip .refresh-btn:hover { background: var(--bg-active); color: var(--text-1); }
+
+.wizard-content { display: none; }
+.wizard-content.active { display: block; }
+
+.product-soft-grid {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 16px;
+}
+
+.soft-card {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+  background: var(--bg-elevated);
+}
+.soft-card:hover { border-color: var(--brand); }
+.soft-card.selected { border-color: var(--brand); background: var(--brand-bg); }
+.soft-card .ribbon {
+  position: absolute;
+  top: -1px; right: 12px;
+  background: var(--warning);
+  color: white;
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 0 0 3px 3px;
+  font-weight: 500;
+}
+.soft-card.selected::after {
+  content: '✓';
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 18px; height: 18px;
+  background: var(--brand);
+  color: white;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.loading-spinner {
+  width: 48px; height: 48px;
+  border: 3px solid var(--border);
+  border-top-color: var(--brand);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* 商品图画廊 */
+.img-thumb {
+  width: 160px; height: 160px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, #f0d68a, #d4a045);
+  flex-shrink: 0;
+  display: grid; place-items: center;
+  color: rgba(0,0,0,0.4);
+  font-size: 48px;
+  position: relative;
+  overflow: hidden;
+  cursor: zoom-in;
+  transition: transform 0.15s;
+}
+.img-thumb:hover { transform: scale(1.02); box-shadow: var(--shadow-md); }
+.img-thumb .img-num {
+  position: absolute;
+  top: 6px; left: 6px;
+  background: rgba(0,0,0,0.55);
+  color: white;
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  font-weight: 500;
+}
+.img-thumb .img-remove {
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 24px; height: 24px;
+  background: rgba(0,0,0,0.55);
+  color: white;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.img-thumb:hover .img-remove { opacity: 1; }
+.img-empty {
+  width: 160px; height: 160px;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  flex-shrink: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: var(--bg);
+  gap: 6px;
+}
+.img-empty:hover { border-color: var(--brand); background: var(--brand-bg); }
+
+/* 软要求 Tab */
+.soft-tab {
+  padding: 8px 16px;
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+}
+.soft-tab:hover { color: var(--text-1); }
+.soft-tab.active {
+  color: var(--brand);
+  border-bottom-color: var(--brand);
+  font-weight: 500;
+}
+
+/* 6 段三列网格 */
+.seg-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.seg-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-elevated);
+  display: flex;
+  flex-direction: column;
+  height: 200px;
+  transition: all 0.15s;
+}
+.seg-card:hover {
+  border-color: var(--border-strong);
+}
+.seg-card.editing {
+  border-color: var(--brand);
+  height: auto;
+  box-shadow: 0 0 0 3px var(--brand-bg);
+}
+.seg-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.seg-card.editing .seg-card-head {
+  background: var(--brand-bg);
+}
+.seg-time {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.seg-time .seg-time-range {
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+}
+.seg-card-body {
+  padding: 12px 14px;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+.seg-card-body .seg-text {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-1);
+  height: 100%;
+  overflow: hidden;
+}
+/* 内容溢出时底部渐变蒙层 */
+.seg-card:not(.editing) .seg-card-body::after {
+  content: '';
+  position: absolute;
+  left: 14px; right: 14px;
+  bottom: 0;
+  height: 24px;
+  background: linear-gradient(to bottom, transparent, var(--bg-elevated));
+  pointer-events: none;
+}
+.seg-card.editing .seg-card-body {
+  overflow: visible;
+  height: auto;
+}
+.seg-card.editing .seg-card-body::after { display: none; }
+
+/* Loading Modal(居中浮层) */
+.loading-modal-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(29,33,41,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+}
+.loading-modal-content {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+  padding: 40px 48px;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  min-width: 360px;
+}
+
+/* 图片放大遮罩 */
+.img-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.78);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+.img-lightbox.open { display: flex; }
+.img-lightbox-content {
+  width: min(640px, 80vw);
+  height: min(640px, 80vw);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, #f0d68a, #d4a045);
+  display: grid; place-items: center;
+  color: rgba(0,0,0,0.4);
+  font-size: 200px;
+  position: relative;
+  cursor: default;
+}
+.img-lightbox-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px; height: 44px;
+  background: rgba(255,255,255,0.92);
+  border-radius: 50%;
+  display: grid; place-items: center;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--text-1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  transition: transform 0.15s;
+}
+.img-lightbox-arrow:hover { transform: translateY(-50%) scale(1.05); }
+.img-lightbox-arrow.prev { left: -22px; }
+.img-lightbox-arrow.next { right: -22px; }
+.img-lightbox-close {
+  position: absolute;
+  top: -44px; right: 0;
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,0.92);
+  border-radius: 50%;
+  display: grid; place-items: center;
+  cursor: pointer;
+  color: var(--text-1);
+  font-size: 16px;
+}
+.img-lightbox-counter {
+  position: absolute;
+  bottom: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,0.85);
+  font-size: 13px;
+  font-family: var(--font-mono);
+  background: rgba(0,0,0,0.4);
+  padding: 3px 12px;
+  border-radius: 12px;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  background: var(--bg-elevated);
+  color: var(--text-1);
+  padding: 10px 18px;
+  border-radius: 999px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Modal */
+.modal-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(29,33,41,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+}
+.modal {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+  max-width: 90vw;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.modal-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.modal-body {
+  padding: 18px 20px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.modal-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.close-btn {
+  width: 24px; height: 24px;
+  display: grid; place-items: center;
+  color: var(--text-3);
+  border-radius: 4px;
+}
+.close-btn:hover { background: var(--bg-hover); color: var(--text-1); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- 顶部 -->
+  <header class="topbar">
+    <a class="logo" href="task-list.html"><div class="logo-mark">AI</div><span>AI 商品视频系统</span></a>
+    <div class="spacer"></div>
+
+    <!-- 额度 Chip -->
+    <div class="quota-chip" title="点击查看详情">
+      <span class="quota-label">今日额度</span>
+      <span class="quota-value">120 / 600s</span>
+      <span class="quota-tag">Seedance 2.0</span>
+      <span class="refresh-btn" title="刷新"><i class="ti ti-refresh" style="font-size:14px;"></i></span>
+    </div>
+
+    <details class="user-menu" style="margin-left:8px;">
+      <summary class="user"><div class="avatar">王</div><span>王运营</span><i class="ti ti-chevron-down" style="font-size:14px;"></i></summary>
+      <div class="user-menu-panel">
+        <div class="user-menu-info">
+          <div class="user-menu-name">王运营</div>
+          <div class="user-menu-account">wang.yunying</div>
+        </div>
+        <div class="user-menu-divider"></div>
+        <a class="user-menu-item" href="login.html"><i class="ti ti-logout"></i><span>退出登录</span></a>
+      </div>
+    </details>
+  </header>
+
+  <!-- 侧边栏 -->
+  <aside class="sidebar">
+    <div class="nav-group-title">主链路</div>
+    <a class="nav-item" href="task-list.html"><i class="ti ti-list-check"></i><span>任务管理</span></a>
+    <a class="nav-item active" href="task-create.html"><i class="ti ti-plus"></i><span>新建生成任务</span></a>
+    <div class="nav-group-title">后期工程</div>
+    <a class="nav-item"><i class="ti ti-movie"></i><span>长视频合成</span></a>
+    <a class="nav-item" style="opacity:0.5; cursor:not-allowed;"><i class="ti ti-typography"></i><span>字幕处理</span><span class="tag tag-default" style="margin-left:auto; font-size:10px;">规划中</span></a>
+    <a class="nav-item" style="opacity:0.5; cursor:not-allowed;"><i class="ti ti-music"></i><span>音频处理</span><span class="tag tag-default" style="margin-left:auto; font-size:10px;">规划中</span></a>
+  </aside>
+
+  <main class="main">
+    <div class="breadcrumb">
+      <a href="task-list.html">任务管理</a>
+      <span class="sep">/</span>
+      <span class="current">新建生成任务</span>
+    </div>
+
+    <div class="page-header">
+      <div>
+        <div class="page-title">新建生成任务</div>
+        <div class="page-subtitle">点击下方步骤可切换查看(原型演示用)</div>
+      </div>
+      <div class="flex gap-8">
+        <a class="btn btn-text-default" href="task-list.html"><i class="ti ti-x"></i>取消</a>
+      </div>
+    </div>
+
+    <!-- 步骤条 -->
+    <div class="steps">
+      <div class="step active" onclick="goStep(1)"><div class="step-num">1</div><div class="step-label">商品图文资料</div></div>
+      <div class="step" onclick="goStep(2)"><div class="step-num">2</div><div class="step-label">生成总分镜脚本配置</div></div>
+      <div class="step" onclick="goStep(3)"><div class="step-num">3</div><div class="step-label">逐段提示词确认 + 提交</div></div>
+    </div>
+
+    <!-- ============== 步骤 1:商品图文资料 ============== -->
+    <div class="wizard-content active" id="step-1">
+      <div class="card card-padded">
+        <div class="flex items-center justify-between mb-16">
+          <div class="card-title" style="margin-bottom:0;">
+            商品图文资料 <span class="hint">填好店铺 ASIN 点击"查询"自动拉取,或手动录入</span>
+          </div>
+          <div class="flex gap-8">
+            <button class="btn-text-default btn" onclick="resetForm()"><i class="ti ti-eraser"></i>[演示] 清空字段</button>
+            <button class="btn-text-default btn" onclick="prefillForm()"><i class="ti ti-database"></i>[演示] 填入示例</button>
+          </div>
+        </div>
+
+        <!-- 顶部:店铺 + ASIN + 查询按钮一行 -->
+        <div class="form-row">
+          <label class="form-label">店铺 ASIN<span class="required">*</span></label>
+          <div class="flex gap-8">
+            <input class="input" id="f-shop" placeholder="如 Amazon-Z01097-US" style="flex:1;">
+            <input class="input font-mono" id="f-asin" placeholder="如 B08XXXXXXX" style="flex:1;">
+            <button class="btn btn-primary" onclick="queryProduct()"><i class="ti ti-search"></i>查询</button>
+          </div>
+          <div class="form-hint" id="query-hint">
+            一期:店铺手动填写,二期改为下拉选择 · 一期仅支持 ASIN,二期支持 SKU
+          </div>
+        </div>
+
+        <!-- 查询失败提示(默认隐藏) -->
+        <div class="card" id="query-fail-tip" style="background:var(--warning-bg); border-color:var(--warning); padding: 10px 14px; margin-bottom:16px; display:none;">
+          <div class="flex items-center gap-8 text-sm">
+            <i class="ti ti-alert-triangle" style="color:var(--warning); font-size:16px;"></i>
+            <span style="color:var(--text-2);">商品中台未找到该 ASIN,请检查后重试,或手动录入下方字段</span>
+          </div>
+        </div>
+
+        <div class="card-section">
+
+          <div class="form-row">
+            <label class="form-label">标题<span class="required">*</span></label>
+            <textarea class="textarea" id="f-title" rows="2" placeholder="请输入商品标题"></textarea>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label">类目<span class="required">*</span></label>
+            <textarea class="textarea" id="f-category" rows="2" placeholder="如 Toys & Games(玩具和游戏)>>Novelty & Gag Toys(创意玩具)>>Money Banks(存钱罐)"></textarea>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label">尺寸<span class="required">*</span></label>
+            <div class="flex gap-8 items-center">
+              <div class="flex items-center" style="flex:1; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden;">
+                <input class="input" id="f-length" placeholder="长" style="border:none; flex:1;">
+                <span style="padding:0 12px; color:var(--text-3); background:var(--bg-hover); height:32px; display:flex; align-items:center; border-left:1px solid var(--border);">CM</span>
+              </div>
+              <span class="text-3">×</span>
+              <div class="flex items-center" style="flex:1; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden;">
+                <input class="input" id="f-width" placeholder="宽" style="border:none; flex:1;">
+                <span style="padding:0 12px; color:var(--text-3); background:var(--bg-hover); height:32px; display:flex; align-items:center; border-left:1px solid var(--border);">CM</span>
+              </div>
+              <span class="text-3">×</span>
+              <div class="flex items-center" style="flex:1; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden;">
+                <input class="input" id="f-height" placeholder="高" style="border:none; flex:1;">
+                <span style="padding:0 12px; color:var(--text-3); background:var(--bg-hover); height:32px; display:flex; align-items:center; border-left:1px solid var(--border);">CM</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label">卖点<span class="required">*</span></label>
+            <textarea class="textarea" id="f-points" rows="6" maxlength="2500" placeholder="每行一条卖点,例如:&#10;精美手工&#10;生肖马设计生动传神&#10;陶瓷材质色泽光亮持久&#10;背部投币口兼具储蓄功能" oninput="updateCharCount()"></textarea>
+            <div class="form-hint flex justify-between">
+              <span>每行一条卖点,大模型会作为生成脚本的关键依据</span>
+              <span id="char-count">0 / 2500</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label">商品图<span class="required">*</span> <span style="color:var(--text-3); font-weight:400; font-size:12px;">(1–5 张,默认从产品库取多角度白底图,作为视频生成模型的输入图)</span></label>
+            <div class="flex gap-12" id="img-gallery" style="flex-wrap:wrap;">
+              <!-- 图片占位会在 JS 中动态填充 -->
+              <div class="img-empty">
+                <i class="ti ti-photo-plus" style="font-size:32px; color:var(--text-3);"></i>
+                <div class="text-xs text-3">点击上传 / 拖拽 / 粘贴</div>
+                <div class="text-xs text-3">已上传 0 / 5 张</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="flex justify-between mt-16">
+        <div></div>
+        <button class="btn btn-primary btn-lg" onclick="goStep(2)">下一步:生成总分镜脚本配置 <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- ============== 步骤 2:生成总分镜脚本配置 ============== -->
+    <div class="wizard-content" id="step-2">
+
+      <!-- 视频时长 + 脚本生成模型 同行 -->
+      <div class="card card-padded mb-12">
+        <div class="form-row-inline" style="margin-bottom:0;">
+          <div class="form-row" style="margin-bottom:0;">
+            <label class="form-label">视频时长<span class="required">*</span></label>
+            <select class="select">
+              <option>5 秒(1 段)</option>
+              <option>10 秒(2 段)</option>
+              <option>15 秒(3 段)</option>
+              <option>20 秒(4 段)</option>
+              <option>25 秒(5 段)</option>
+              <option selected>30 秒(6 段)</option>
+              <option>35 秒(7 段)</option>
+              <option>40 秒(8 段)</option>
+              <option>45 秒(9 段)</option>
+              <option>50 秒(10 段)</option>
+              <option>55 秒(11 段)</option>
+              <option>60 秒(12 段)</option>
+            </select>
+            <div class="form-hint">5–60 秒,5 的整数倍。每 5 秒一段。</div>
+          </div>
+          <div class="form-row" style="margin-bottom:0;">
+            <label class="form-label">脚本生成模型<span class="required">*</span></label>
+            <select class="select">
+              <option selected>GPT-5.4</option>
+              <option>Seed 2.0</option>
+            </select>
+            <div class="form-hint">用于根据商品图文资料生成总分镜脚本</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 硬规则 + 软要求,左右两栏 -->
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+
+        <!-- 左:固定硬规则(只读) -->
+        <div class="card card-padded">
+          <div class="card-title">
+            固定硬规则
+            <span class="tag tag-default" style="margin-left:6px; font-size:11px;">只读</span>
+          </div>
+          <div class="text-xs text-3 mb-12" style="line-height:1.6;">
+            适用于所有任务,不可修改
+          </div>
+          <div style="font-size:12px; line-height:1.85; color:var(--text-2); background:#FAFBFC; border:1px solid var(--border); border-radius:var(--radius); padding:12px 14px; max-height:480px; overflow-y:auto;">
+            <div style="color:var(--text-1); font-weight:500; margin-bottom:8px;">你是专业的跨境电商亚马逊美国站商品卖点宣传介绍视频分镜脚本工程师……</div>
+            <p style="margin-bottom:6px;">你的核心任务不是写广告文案,而是先完成整条视频的整体剧本设计,再拆解为多个连续的 5 秒分镜片段。虽然输出必须按每 5 秒切段,但整条视频必须具备完整宣传片的节奏感:开头建立商品第一印象,中段逐步展开核心卖点,结尾形成收束和呼应,整体像一支完整的亚马逊商品卖点宣传介绍视频,而不是彼此割裂的小片段。</p>
+            <p style="margin-bottom:4px;">1. 用户输入的总视频时长范围为 5–60 秒,且一定是 5 的整数倍。必须严格按每 5 秒一段拆分,输出段数必须严格等于总视频时长 ÷ 5,不得缺段、不得多段。</p>
+            <p style="margin-bottom:4px;">2. 输出格式必须为合法 JSON 数组,不要输出 JSON 以外的任何文字。JSON 数组中的每一项都必须且仅包含以下字段:segment_index、storyboard_script。segment_index 必须从 1 开始连续递增,严格对应每个 5 秒分镜片段的顺序;storyboard_script 不允许为空。</p>
+            <p style="margin-bottom:4px;">3. 只输出中文分镜剧本,只输出最终结果,不要输出解释、说明、前言或其他多余文字。</p>
+            <p style="margin-bottom:4px;">4. 所有分段必须保持同一个商品的一致性,不得虚构图片或商品信息中没有明确体现的外观、结构、材质、功能、配件或场景。</p>
+            <p style="margin-bottom:4px;">5. 用户明确提供的核心卖点不得遗漏;核心结构功能点至少有独立分镜覆盖,不得仅用装饰性分镜替代。</p>
+            <p style="margin-bottom:4px;">6. 对于较短时长,应优先聚焦最核心的 1–2 个卖点;对于较长时长,再自然扩展到更多卖点,但单段信息不得过载。</p>
+            <p>7. 不得设计品牌侵权、违禁、禁售、高风险元素,或依赖中文文字、字幕、贴纸、水印、界面文字来表达卖点。</p>
+          </div>
+        </div>
+
+        <!-- 右:软要求 Tab + 可编辑文本 -->
+        <div class="card card-padded">
+          <div class="card-title">
+            风格模板
+            <span class="tag tag-brand" style="margin-left:6px; font-size:11px;">可编辑</span>
+          </div>
+          <div class="text-xs text-3 mb-12" style="line-height:1.6;">
+            先选一种模板,再按需修改下方文本。本次修改仅对当前任务生效,不影响下次新建。
+          </div>
+
+          <!-- Tab -->
+          <div style="display:flex; gap:0; border-bottom:1px solid var(--border); margin-bottom:12px; align-items:center;">
+            <div class="soft-tab active" onclick="switchSoft(this, 'aggressive')">激进版 <span class="tag tag-warning" style="margin-left:4px; font-size:10px; padding:0 5px;">推荐</span></div>
+            <div class="soft-tab" onclick="switchSoft(this, 'balanced')">平衡版</div>
+            <div class="soft-tab" onclick="switchSoft(this, 'conservative')">保守版</div>
+            <div style="flex:1;"></div>
+            <span class="tag tag-default" style="font-size:11px; padding:1px 8px; opacity:0.85;" title="二期支持">
+              <i class="ti ti-bookmark-plus" style="font-size:11px;"></i> 我的模板
+              <span style="margin-left:4px; color:var(--text-3);">二期</span>
+            </span>
+            <a href="https://www.yuque.com/johnny97pm/zhcx/ai_video?singleDoc" target="_blank" class="help-link" style="margin-left:8px;" title="查看帮助文档">
+              <i class="ti ti-help-circle"></i>
+              <span>帮助文档</span>
+            </a>
+          </div>
+
+          <textarea class="textarea" id="soft-textarea" style="min-height:420px; line-height:1.75; font-size:12px;">分镜设计优先级:在保证商品一致性和基础可用率的前提下,尽量把视频做得更像真正的商品宣传片,而不是普通商品轮播。优先强化画面吸引力、宣传片质感、镜头张力、空间层次和卖点表达的冲击力,相信 Seedance 2.0 的表现能力,尽可能大胆地拉开镜头层次和视觉差异。
+
+若商品结构简单或卖点较少,不要只停留在基础的整体展示,可主动通过场景切换、局部切换、材质特写、功能结构特写、近中远景、陈列场景、空间关系、前后景层次和结尾回扣,把整条视频做出明显的节奏起伏和宣传片质感。
+
+在保证主体清晰、商品一致、整体可用的前提下,允许更积极地使用镜头变化和场景变化,例如缓慢推进、缓慢侧移、轻微环绕、景别跳转、视角切换、前后景层次、简洁生活化场景切换、氛围光线变化和更具展示感的构图方式,让视频更生动、更精致、更吸睛。
+
+如某个卖点可以通过结构特写、局部镜头、场景化陈列、静态功能暗示或更具表现力的镜头语言来增强表达,应优先使用更有视觉吸引力、更具宣传片质感的方式呈现,不必过度保守。尺寸、大小感、占地感或摆放不占空间,优先通过更高级的桌面陈列、柜面搭配、展示架构图、前后景关系和空间图来表达,提升整体画面完成度。
+
+描述尽量客观、可直接观察、可被镜头验证,但允许适度强化商品质感、空间层次、光影氛围和镜头表现力。结尾分镜不要只是简单回到正面展示,而应形成更完整、更有记忆点的收束,明显回扣前文卖点或整体气质。仍需避免失控特效、明显不稳定画面、强情节表演和高风险复杂动作,但整体风格应明显比保守版更大胆、更有镜头感、更有宣传片气质。</textarea>
+          <div class="text-xs text-3 mt-8 flex justify-between">
+            <span><i class="ti ti-info-circle"></i> 二期会支持保存为"我的模板"沉淀常用配置,本期修改仅对当前任务生效</span>
+            <span id="soft-char-count">字符数:608</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="flex justify-between mt-16">
+        <button class="btn btn-default" onclick="goStep(1)"><i class="ti ti-arrow-left"></i>上一步</button>
+        <button class="btn btn-primary btn-lg" onclick="triggerGenerate()"><i class="ti ti-sparkles"></i> 生成总分镜脚本 <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- ============== 步骤 3:逐段提示词确认 + 提交 ============== -->
+    <div class="wizard-content" id="step-3">
+
+      <!-- 顶部:概要 + 返回重新生成 -->
+      <div class="card mb-12" style="padding: 12px 16px;">
+        <div class="flex items-center justify-between gap-12">
+          <div class="flex items-center gap-8 text-sm text-2">
+            <i class="ti ti-sparkles" style="color:var(--brand);"></i>
+            <span>已为商品 <span class="font-mono font-medium">B08DNRKJX7</span> 生成 6 段分镜提示词,使用 GPT-5.4 · 激进版,耗时 22s</span>
+          </div>
+          <button class="btn btn-default btn-sm" onclick="goStep(2)"><i class="ti ti-arrow-back-up"></i>返回上一步重新生成</button>
+        </div>
+      </div>
+
+      <!-- 最终提示词模板(默认展开) -->
+      <div class="card mb-12" style="padding: 14px 16px;">
+        <div class="flex items-center gap-8 mb-12">
+          <i class="ti ti-template text-3"></i>
+          <span class="text-sm font-medium">最终提示词模板</span>
+          <span class="tag tag-default" style="font-size:11px;">只读</span>
+          <span class="text-xs text-3">下方每段编辑的内容会替换 <code style="background:var(--brand-bg); color:var(--brand); padding:0 4px; border-radius:2px; font-size:11px;">{{5s分镜脚本}}</code> 后,整体作为最终提示词发给视频生成模型</span>
+        </div>
+        <div style="background:#FAFBFC; border:1px solid var(--border); border-radius:var(--radius); padding:14px 16px; font-size:13px; line-height:1.8; color:var(--text-1);">
+          <div style="margin-bottom:10px;">
+            <span style="color:var(--brand); font-weight:500;">【亚马逊美国站点商品卖点介绍视频5s分镜脚本】:</span>
+            <span class="font-mono" style="background:var(--brand-bg); color:var(--brand); padding:1px 6px; border-radius:3px; font-size:12px;">{{5s分镜脚本}}</span>
+          </div>
+          <div style="color:var(--text-2);">
+            <span style="color:var(--warning); font-weight:500;">【要求】:</span>虽然分镜脚本是中文,但视频画面中禁止出现任何中文字幕、中文元素、品牌、Logo、水印及任何亚马逊违规高风险元素。严格忠于商品图片和分镜脚本,只展示已明确给出的商品外观、结构和卖点,不新增无关内容,保持商品一致。
+          </div>
+        </div>
+      </div>
+
+
+      <!-- 提示条 -->
+      <div class="card mb-12" id="step3-tip" style="background:var(--brand-bg); border-color:var(--brand); padding: 10px 14px;">
+        <div class="flex items-center gap-12">
+          <i class="ti ti-info-circle" style="color:var(--brand); font-size:16px;"></i>
+          <div class="flex-1 text-sm">
+            按时间顺序展示 6 段分镜脚本,可整体浏览节奏。点击任意一段卡片右上角的<i class="ti ti-edit" style="font-size:14px; vertical-align:-2px;"></i>"编辑"对该段进行微调。
+          </div>
+          <a href="https://www.yuque.com/johnny97pm/zhcx/ai_video?singleDoc" target="_blank" class="help-link" title="查看帮助文档">
+            <i class="ti ti-help-circle"></i>
+            <span>帮助文档</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="seg-grid" id="seg-grid">
+
+        <!-- 第 1 段 -->
+        <div class="seg-card" data-text="暖金色光影中,金色陶瓷生肖马摆件从暗处缓慢显现,镜头由远到近推进,聚焦昂首跃起的整体轮廓与立体底座,先建立精致、吉祥、吸睛的第一印象,背景干净高级,突出它既是存钱罐也是装饰摆件。">
+          <div class="seg-card-head">
+            <div class="seg-time">第 1 段 <span class="seg-time-range">· 0–5s</span></div>
+            <button class="btn-text btn" onclick="enterEdit(this)"><i class="ti ti-edit"></i>编辑</button>
+          </div>
+          <div class="seg-card-body">
+            <div class="seg-text">暖金色光影中,金色陶瓷生肖马摆件从暗处缓慢显现,镜头由远到近推进,聚焦昂首跃起的整体轮廓与立体底座,先建立精致、吉祥、吸睛的第一印象,背景干净高级,突出它既是存钱罐也是装饰摆件。</div>
+          </div>
+        </div>
+
+        <!-- 第 2 段 -->
+        <div class="seg-card" data-text="镜头切到侧前方中近景,缓慢环绕马头、鬃毛、前蹄和挺立姿态,重点展现生动神态与跃动造型;光线掠过表面,带出细腻磨砂与高亮釉面交替的层次,让生肖马形象更显灵动立体。">
+          <div class="seg-card-head">
+            <div class="seg-time">第 2 段 <span class="seg-time-range">· 5–10s</span></div>
+            <button class="btn-text btn" onclick="enterEdit(this)"><i class="ti ti-edit"></i>编辑</button>
+          </div>
+          <div class="seg-card-body">
+            <div class="seg-text">镜头切到侧前方中近景,缓慢环绕马头、鬃毛、前蹄和挺立姿态,重点展现生动神态与跃动造型;光线掠过表面,带出细腻磨砂与高亮釉面交替的层次,让生肖马形象更显灵动立体。</div>
+          </div>
+        </div>
+
+        <!-- 第 3 段(默认编辑态作演示) -->
+        <div class="seg-card editing" data-text="进入细节特写,镜头沿马身缓慢下移,展示鞍饰、底座纹样、元宝造型和周围装饰起伏,强调陶瓷材质的光泽感与完整做工;通过反光和细节稳定呈现其颜色与亮泽长久保持的质感。">
+          <div class="seg-card-head">
+            <div class="seg-time">第 3 段 <span class="seg-time-range">· 10–15s</span><span class="tag tag-info" style="font-size:11px; padding:0 6px; margin-left:4px;">已修改</span></div>
+            <div class="flex gap-8">
+              <button class="btn-text-default btn" onclick="exitEdit(this, false)">取消</button>
+              <button class="btn btn-primary btn-sm" onclick="exitEdit(this, true)">保存修改</button>
+            </div>
+          </div>
+          <div class="seg-card-body">
+            <textarea class="textarea" style="min-height:120px; font-family:var(--font); line-height:1.7;">进入细节特写,镜头沿马身缓慢下移,展示鞍饰、底座纹样、元宝造型和周围装饰起伏,强调陶瓷材质的光泽感与完整做工;通过反光和细节稳定呈现其颜色与亮泽长久保持的质感。</textarea>
+            <div class="text-xs text-3 mt-8 flex justify-between">
+              <span>字符数:98</span>
+              <span><i class="ti ti-info-circle"></i> 修改后系统会自动暂存,提交时一起生效</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 第 4 段 -->
+        <div class="seg-card" data-text="镜头转向背侧与后方,清晰带出背部投币口,再切到桌面场景中的近景陈列,摆放在书桌或层架一角不过分占空间;画面表达它不仅能日常收纳硬币,也能自然融入居家装饰。">
+          <div class="seg-card-head">
+            <div class="seg-time">第 4 段 <span class="seg-time-range">· 15–20s</span></div>
+            <button class="btn-text btn" onclick="enterEdit(this)"><i class="ti ti-edit"></i>编辑</button>
+          </div>
+          <div class="seg-card-body">
+            <div class="seg-text">镜头转向背侧与后方,清晰带出背部投币口,再切到桌面场景中的近景陈列,摆放在书桌或层架一角不过分占空间;画面表达它不仅能日常收纳硬币,也能自然融入居家装饰。</div>
+          </div>
+        </div>
+
+        <!-- 第 5 段 -->
+        <div class="seg-card" data-text="生活化陈列镜头中,这只金色生肖马被放在整洁桌面与置物架之间,周围环境简洁雅致,镜头轻微侧移,突出其小巧尺寸、易于摆放的优势;同时保留主体高辨识度,让实用储蓄与装饰属性并存。">
+          <div class="seg-card-head">
+            <div class="seg-time">第 5 段 <span class="seg-time-range">· 20–25s</span></div>
+            <button class="btn-text btn" onclick="enterEdit(this)"><i class="ti ti-edit"></i>编辑</button>
+          </div>
+          <div class="seg-card-body">
+            <div class="seg-text">生活化陈列镜头中,这只金色生肖马被放在整洁桌面与置物架之间,周围环境简洁雅致,镜头轻微侧移,突出其小巧尺寸、易于摆放的优势;同时保留主体高辨识度,让实用储蓄与装饰属性并存。</div>
+          </div>
+        </div>
+
+        <!-- 第 6 段 -->
+        <div class="seg-card" data-text="结尾回到英雄镜头,马摆件置于柔和节庆氛围中,镜头缓慢拉近至整体正侧面,底座与跃马姿态一同入画,传达吉祥寓意与赠礼价值;最后停留在闪耀金色表面与昂扬造型上,形成完整收束。">
+          <div class="seg-card-head">
+            <div class="seg-time">第 6 段 <span class="seg-time-range">· 25–30s</span></div>
+            <button class="btn-text btn" onclick="enterEdit(this)"><i class="ti ti-edit"></i>编辑</button>
+          </div>
+          <div class="seg-card-body">
+            <div class="seg-text">结尾回到英雄镜头,马摆件置于柔和节庆氛围中,镜头缓慢拉近至整体正侧面,底座与跃马姿态一同入画,传达吉祥寓意与赠礼价值;最后停留在闪耀金色表面与昂扬造型上,形成完整收束。</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 提交区:视频生成模型选择 + 提交按钮 -->
+      <div class="card card-padded mt-16">
+        <div class="card-title">提交生成 <span class="hint">每段提示词将分别调用视频生成模型,异步并行生成 5 秒片段</span></div>
+        <div class="form-row" style="margin-bottom:12px;">
+          <label class="form-label">视频生成模型<span class="required">*</span></label>
+          <select class="select" style="width:280px;">
+            <option selected>Seedance 2.0</option>
+            <option disabled>HappyHorse 1.0(二期接入)</option>
+          </select>
+          <div class="form-hint">用于将每段分镜脚本生成 5 秒视频片段。二期会接入 HappyHorse 1.0 作为备选模型。</div>
+        </div>
+      </div>
+
+      <div class="flex justify-between mt-16">
+        <button class="btn btn-default" onclick="goStep(2)"><i class="ti ti-arrow-left"></i>上一步</button>
+        <div class="flex gap-8">
+          <button class="btn btn-primary btn-lg" onclick="openSubmitModal()"><i class="ti ti-send"></i> 提交任务</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast">
+  <i class="ti ti-circle-check-filled" style="color:var(--success); font-size:18px;"></i>
+  <span id="toast-text">操作成功</span>
+</div>
+
+<!-- 生成 Loading Modal -->
+<div class="loading-modal-mask" id="loading-modal" style="display:none;">
+  <div class="loading-modal-content">
+    <div class="loading-spinner"></div>
+    <div class="font-semibold text-md mb-4">正在生成总分镜脚本</div>
+    <div class="text-sm text-2 mb-12" id="loading-modal-meta">使用 GPT-5.4 · 激进版风格,根据商品图文资料生成 6 段分镜……</div>
+    <div class="text-xs text-3 mb-16">预计 15–30 秒,请耐心等待</div>
+    <button class="btn btn-default" onclick="cancelLoading()"><i class="ti ti-x"></i>取消生成</button>
+  </div>
+</div>
+
+<!-- 重新生成二次确认 Modal -->
+<div class="modal-mask" id="regen-confirm-modal" style="display:none;" onclick="closeRegenConfirm()">
+  <div class="modal" style="width:480px;" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span><i class="ti ti-alert-triangle-filled" style="color:var(--warning); margin-right:6px;"></i>确认重新生成?</span>
+      <button class="close-btn" onclick="closeRegenConfirm()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="card mb-12" style="background:var(--info-bg); border-color:var(--info); padding:10px 14px;">
+        <div class="flex items-start gap-8 text-xs" style="color:var(--text-2); line-height:1.7;">
+          <i class="ti ti-info-circle" style="color:var(--info); font-size:14px; margin-top:2px;"></i>
+          <span>本弹窗仅在<strong>已生成过脚本</strong>的情况下出现。<strong>首次生成</strong>会直接进入 Loading,不会弹此提醒。</span>
+        </div>
+      </div>
+      <div class="text-sm text-2" style="line-height:1.8;">
+        重新生成将<strong style="color:var(--warning);">覆盖</strong>当前已生成的 6 段提示词,你已做的逐段编辑也会丢失。
+      </div>
+      <div class="text-sm text-2 mt-12" style="line-height:1.8;">
+        如果只是想微调某一段,建议直接在第 3 步对应段落点"编辑",无需重新生成整批。
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div style="flex:1;"></div>
+      <button class="btn btn-default" onclick="closeRegenConfirm()">取消</button>
+      <button class="btn btn-primary" onclick="confirmRegen()"><i class="ti ti-refresh"></i> 确认覆盖并重新生成</button>
+    </div>
+  </div>
+</div>
+
+<!-- 提交确认 Modal -->
+<div class="modal-mask" id="submit-modal" style="display:none;" onclick="closeSubmitModal()">
+  <div class="modal" style="width:560px;" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span><i class="ti ti-send" style="color:var(--brand); margin-right:6px;"></i>确认提交任务</span>
+      <button class="close-btn" onclick="closeSubmitModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <dl class="descriptions" style="font-size:13px;">
+        <dt>店铺</dt><dd>Amazon-Z01097-US</dd>
+        <dt>ASIN</dt><dd class="font-mono">B08DNRKJX7</dd>
+        <dt>视频时长</dt><dd>30 秒(将拆分为 6 个 5 秒子任务并行调用)</dd>
+        <dt>脚本生成模型</dt><dd>GPT-5.4(已使用)</dd>
+        <dt>风格模板</dt><dd><span class="tag tag-warning">激进版</span></dd>
+        <dt>视频生成模型</dt><dd>Seedance 2.0</dd>
+        <dt>本次消耗额度</dt><dd>30 秒</dd>
+      </dl>
+
+      <div class="card mt-16" id="quota-ok-card" style="background:var(--success-bg); border-color:var(--success); padding: 12px 14px;">
+        <div class="flex items-center gap-12">
+          <i class="ti ti-circle-check-filled" style="color:var(--success); font-size:20px;"></i>
+          <div class="flex-1">
+            <div class="font-medium" style="color:var(--success);">额度充足,可以提交</div>
+            <div class="text-xs text-2 mt-4">
+              当前剩余 <strong>480 秒</strong> · 本次需 <strong>30 秒</strong> · 提交后剩余 <strong>450 秒</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt-16" id="quota-fail-card" style="background:var(--danger-bg); border-color:var(--danger); padding: 12px 14px; display:none;">
+        <div class="flex items-center gap-12">
+          <i class="ti ti-alert-triangle-filled" style="color:var(--danger); font-size:20px;"></i>
+          <div class="flex-1">
+            <div class="font-medium" style="color:var(--danger);">额度不足,无法提交</div>
+            <div class="text-xs text-2 mt-4">
+              当前剩余 <strong>20 秒</strong> · 本次需 <strong>30 秒</strong>。请等待额度刷新或联系管理员调整。
+            </div>
+            <div class="text-xs text-2 mt-4">
+              <i class="ti ti-info-circle"></i> 离开本页将丢失当前所有配置,请等额度恢复后再来重新填写。
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-xs text-3 mt-12">
+        <i class="ti ti-info-circle"></i> 提交成功后系统会分配 TaskID 并创建 6 个 5s 子任务,异步调用 Seedance 2.0,预计 5–15 分钟生成完毕。
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-text-default" onclick="toggleQuotaInModal()">[演示] 切换额度不足</button>
+      <div style="flex:1;"></div>
+      <button class="btn btn-default" onclick="closeSubmitModal()">取消</button>
+      <button class="btn btn-primary" id="submit-confirm-btn"><i class="ti ti-send"></i> 确认提交</button>
+    </div>
+  </div>
+</div>
+
+<!-- 商品图放大遮罩 -->
+<div class="img-lightbox" id="img-lightbox" onclick="closeLightbox()">
+  <div class="img-lightbox-content" id="lightbox-content" onclick="event.stopPropagation()">
+    <div class="img-lightbox-close" onclick="closeLightbox()"><i class="ti ti-x"></i></div>
+    <div class="img-lightbox-arrow prev" onclick="lightboxPrev()"><i class="ti ti-chevron-left"></i></div>
+    <i class="ti ti-photo"></i>
+    <div class="img-lightbox-arrow next" onclick="lightboxNext()"><i class="ti ti-chevron-right"></i></div>
+    <div class="img-lightbox-counter" id="lightbox-counter">1 / 5</div>
+  </div>
+</div>
+
+<script>
+function goStep(n) {
+  document.querySelectorAll('.wizard-content').forEach(el => el.classList.remove('active'));
+  document.getElementById('step-' + n).classList.add('active');
+  document.querySelectorAll('.steps .step').forEach((el, i) => {
+    el.classList.remove('done', 'active');
+    if (i + 1 < n) el.classList.add('done');
+    if (i + 1 === n) el.classList.add('active');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.querySelectorAll('.soft-card').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.soft-card').forEach(x => x.classList.remove('selected'));
+    el.classList.add('selected');
+  });
+});
+
+// 6 段网格:就地编辑模式
+function enterEdit(btn) {
+  const card = btn.closest('.seg-card');
+  // 取消所有其他卡片的编辑态
+  document.querySelectorAll('.seg-card.editing').forEach(other => {
+    if (other !== card) restoreCard(other);
+  });
+  // 当前卡片进入编辑态
+  const text = card.dataset.text || card.querySelector('.seg-text').textContent;
+  card.dataset.text = text;
+  card.classList.add('editing');
+  card.querySelector('.seg-card-head').innerHTML = `
+    <div class="seg-time">${card.querySelector('.seg-time')?.outerHTML.match(/>([^<]*)<span/)?.[1] || ''}<span class="seg-time-range">${getTimeRange(card)}</span></div>
+    <div class="flex gap-8">
+      <button class="btn-text-default btn" onclick="exitEdit(this, false)">取消</button>
+      <button class="btn btn-primary btn-sm" onclick="exitEdit(this, true)">保存修改</button>
+    </div>
+  `;
+  card.querySelector('.seg-card-body').innerHTML = `
+    <textarea class="textarea" style="min-height:120px; font-family:var(--font); line-height:1.7;">${text}</textarea>
+    <div class="text-xs text-3 mt-8 flex justify-between">
+      <span>字符数:${text.length}</span>
+      <span><i class="ti ti-info-circle"></i> 修改后系统会自动暂存,提交时一起生效</span>
+    </div>
+  `;
+  // 重新构建 head(因为之前的写法不可靠)
+  rebuildHead(card, true);
+  card.querySelector('textarea').focus();
+}
+
+function exitEdit(btn, save) {
+  const card = btn.closest('.seg-card');
+  if (save) {
+    const newText = card.querySelector('textarea').value;
+    card.dataset.text = newText;
+  }
+  restoreCard(card);
+}
+
+function restoreCard(card) {
+  card.classList.remove('editing');
+  rebuildHead(card, false);
+  card.querySelector('.seg-card-body').innerHTML = `<div class="seg-text">${card.dataset.text}</div>`;
+}
+
+function rebuildHead(card, isEditing) {
+  // 段号和时间范围用 data 属性获取最稳
+  const segNo = card.dataset.segNo;
+  const segRange = card.dataset.segRange;
+  const head = card.querySelector('.seg-card-head');
+  if (isEditing) {
+    head.innerHTML = `
+      <div class="seg-time">第 ${segNo} 段 <span class="seg-time-range">· ${segRange}</span></div>
+      <div class="flex gap-8">
+        <button class="btn-text-default btn" onclick="exitEdit(this, false)">取消</button>
+        <button class="btn btn-primary btn-sm" onclick="exitEdit(this, true)">保存修改</button>
+      </div>
+    `;
+  } else {
+    head.innerHTML = `
+      <div class="seg-time">第 ${segNo} 段 <span class="seg-time-range">· ${segRange}</span></div>
+      <button class="btn-text btn" onclick="enterEdit(this)"><i class="ti ti-edit"></i>编辑</button>
+    `;
+  }
+}
+
+function getTimeRange(card) {
+  return card.dataset.segRange || '';
+}
+
+// 初始化每张段卡片的 segNo / segRange data
+document.querySelectorAll('.seg-card').forEach((card, i) => {
+  card.dataset.segNo = i + 1;
+  card.dataset.segRange = `${i * 5}–${(i + 1) * 5}s`;
+});
+
+// 标记是否已经成功生成过(用于触发二次确认)
+window._scriptGenerated = true;  // 演示用:默认认为已经生成过,所以再次点会触发确认
+
+// 第 2 步底部按钮:触发生成
+function triggerGenerate() {
+  if (window._scriptGenerated) {
+    // 已生成过 → 二次确认
+    document.getElementById('regen-confirm-modal').style.display = 'flex';
+  } else {
+    // 第一次 → 直接进入 Loading
+    startLoading();
+  }
+}
+function closeRegenConfirm() {
+  document.getElementById('regen-confirm-modal').style.display = 'none';
+}
+function confirmRegen() {
+  closeRegenConfirm();
+  startLoading();
+}
+function startLoading() {
+  document.getElementById('loading-modal').style.display = 'flex';
+  // 演示:3 秒后自动完成 + 跳第 3 步
+  clearTimeout(window._loadingTimer);
+  window._loadingTimer = setTimeout(() => {
+    document.getElementById('loading-modal').style.display = 'none';
+    window._scriptGenerated = true;
+    goStep(3);
+  }, 3000);
+}
+function cancelLoading() {
+  clearTimeout(window._loadingTimer);
+  document.getElementById('loading-modal').style.display = 'none';
+}
+
+// ========== 步骤 1 演示用函数 ==========
+const sampleData = {
+  shop: 'Amazon-Z01097-US',
+  asin: 'B08DNRKJX7',
+  title: '生肖马陶瓷存钱罐可取硬币储蓄罐摆件(立马聚财2025h-04) 1pcs',
+  category: 'Toys & Games(玩具和游戏)>>Novelty & Gag Toys(创意玩具)>>Money Banks(存钱罐)',
+  length: '23.5',
+  width: '21.5',
+  height: '10',
+  points: '精美手工\n生肖马设计生动传神,增添家居艺术气息\n采用优质陶瓷材料,色泽光亮持久,不易褪色\n适用于客厅、书房、卧室等多种场景\n可作家居装饰摆件,亦可作节庆赠礼\n寓意吉祥旺财\n背部带投币口设计,兼具储蓄功能',
+  imgCount: 5
+};
+
+function prefillForm() {
+  document.getElementById('f-shop').value = sampleData.shop;
+  document.getElementById('f-asin').value = sampleData.asin;
+  document.getElementById('f-title').value = sampleData.title;
+  document.getElementById('f-category').value = sampleData.category;
+  document.getElementById('f-length').value = sampleData.length;
+  document.getElementById('f-width').value = sampleData.width;
+  document.getElementById('f-height').value = sampleData.height;
+  document.getElementById('f-points').value = sampleData.points;
+  updateCharCount();
+  renderImages(sampleData.imgCount);
+  document.getElementById('query-fail-tip').style.display = 'none';
+}
+
+function resetForm() {
+  ['f-shop','f-asin','f-title','f-category','f-length','f-width','f-height','f-points'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  updateCharCount();
+  renderImages(0);
+  document.getElementById('query-fail-tip').style.display = 'none';
+}
+
+function queryProduct() {
+  const asin = document.getElementById('f-asin').value.trim();
+  const shop = document.getElementById('f-shop').value.trim();
+  if (!asin || !shop) {
+    alert('请先填写店铺和 ASIN');
+    return;
+  }
+  // 演示:输入示例 ASIN 时返回数据,其他报错
+  if (asin === 'B08DNRKJX7') {
+    prefillForm();
+  } else {
+    resetForm();
+    document.getElementById('f-shop').value = shop;
+    document.getElementById('f-asin').value = asin;
+    document.getElementById('query-fail-tip').style.display = 'block';
+  }
+}
+
+function updateCharCount() {
+  const v = document.getElementById('f-points').value || '';
+  document.getElementById('char-count').textContent = v.length + ' / 2500';
+}
+
+function renderImages(count) {
+  const gallery = document.getElementById('img-gallery');
+  const colors = [
+    'linear-gradient(135deg,#f0d68a,#d4a045)',
+    'linear-gradient(135deg,#e8c270,#b8842a)',
+    'linear-gradient(135deg,#d4a45a,#a07028)',
+    'linear-gradient(135deg,#c89545,#8a6020)',
+    'linear-gradient(135deg,#b88535,#7a5018)'
+  ];
+  let html = '';
+  for (let i = 0; i < count; i++) {
+    html += `<div class="img-thumb" style="background:${colors[i]};" onclick="openLightbox(${i})">
+      <span class="img-num">${i+1}</span>
+      <i class="ti ti-photo"></i>
+      <span class="img-remove" title="移除" onclick="event.stopPropagation();"><i class="ti ti-x" style="font-size:14px;"></i></span>
+    </div>`;
+  }
+  if (count < 5) {
+    html += `<div class="img-empty">
+      <i class="ti ti-photo-plus" style="font-size:32px; color:var(--text-3);"></i>
+      <div class="text-xs text-3">点击上传 / 拖拽 / 粘贴</div>
+      <div class="text-xs text-3">已上传 ${count} / 5 张</div>
+    </div>`;
+  }
+  gallery.innerHTML = html;
+  window._imgCount = count;
+  window._imgColors = colors;
+}
+
+let _lightboxIndex = 0;
+function openLightbox(index) {
+  _lightboxIndex = index;
+  applyLightbox();
+  document.getElementById('img-lightbox').classList.add('open');
+}
+function applyLightbox() {
+  const colors = window._imgColors || [];
+  const total = window._imgCount || 0;
+  document.getElementById('lightbox-content').style.background = colors[_lightboxIndex];
+  document.getElementById('lightbox-counter').textContent = (_lightboxIndex + 1) + ' / ' + total;
+}
+function lightboxPrev() {
+  const total = window._imgCount || 0;
+  _lightboxIndex = (_lightboxIndex - 1 + total) % total;
+  applyLightbox();
+}
+function lightboxNext() {
+  const total = window._imgCount || 0;
+  _lightboxIndex = (_lightboxIndex + 1) % total;
+  applyLightbox();
+}
+function closeLightbox() {
+  document.getElementById('img-lightbox').classList.remove('open');
+}
+
+// 键盘左右切换 + Esc 关闭
+document.addEventListener('keydown', e => {
+  const lb = document.getElementById('img-lightbox');
+  if (lb && lb.classList.contains('open')) {
+    if (e.key === 'ArrowLeft') lightboxPrev();
+    else if (e.key === 'ArrowRight') lightboxNext();
+    else if (e.key === 'Escape') closeLightbox();
+  }
+});
+
+// Toast
+function showToast(text) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-text').textContent = text;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// 提交 Modal
+function openSubmitModal() {
+  document.getElementById('submit-modal').style.display = 'flex';
+}
+function closeSubmitModal() {
+  document.getElementById('submit-modal').style.display = 'none';
+}
+function toggleQuotaInModal() {
+  const ok = document.getElementById('quota-ok-card');
+  const fail = document.getElementById('quota-fail-card');
+  const btn = document.getElementById('submit-confirm-btn');
+  if (ok.style.display === 'none') {
+    ok.style.display = 'flex';
+    fail.style.display = 'none';
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.style.cursor = 'pointer';
+  } else {
+    ok.style.display = 'none';
+    fail.style.display = 'flex';
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+    btn.style.cursor = 'not-allowed';
+  }
+}
+
+// 默认填充示例数据,方便预览
+window.addEventListener('DOMContentLoaded', () => {
+  prefillForm();
+  // 软要求字符数监听
+  const ta = document.getElementById('soft-textarea');
+  if (ta) {
+    const updateSoftCount = () => {
+      document.getElementById('soft-char-count').textContent = '字符数:' + ta.value.length;
+    };
+    ta.addEventListener('input', updateSoftCount);
+    updateSoftCount();
+  }
+});
+
+// 切换软要求模板
+const softTemplates = {
+  aggressive: `分镜设计优先级:在保证商品一致性和基础可用率的前提下,尽量把视频做得更像真正的商品宣传片,而不是普通商品轮播。优先强化画面吸引力、宣传片质感、镜头张力、空间层次和卖点表达的冲击力,相信 Seedance 2.0 的表现能力,尽可能大胆地拉开镜头层次和视觉差异。
+
+若商品结构简单或卖点较少,不要只停留在基础的整体展示,可主动通过场景切换、局部切换、材质特写、功能结构特写、近中远景、陈列场景、空间关系、前后景层次和结尾回扣,把整条视频做出明显的节奏起伏和宣传片质感。
+
+在保证主体清晰、商品一致、整体可用的前提下,允许更积极地使用镜头变化和场景变化,例如缓慢推进、缓慢侧移、轻微环绕、景别跳转、视角切换、前后景层次、简洁生活化场景切换、氛围光线变化和更具展示感的构图方式,让视频更生动、更精致、更吸睛。
+
+如某个卖点可以通过结构特写、局部镜头、场景化陈列、静态功能暗示或更具表现力的镜头语言来增强表达,应优先使用更有视觉吸引力、更具宣传片质感的方式呈现,不必过度保守。尺寸、大小感、占地感或摆放不占空间,优先通过更高级的桌面陈列、柜面搭配、展示架构图、前后景关系和空间图来表达,提升整体画面完成度。
+
+描述尽量客观、可直接观察、可被镜头验证,但允许适度强化商品质感、空间层次、光影氛围和镜头表现力。结尾分镜不要只是简单回到正面展示,而应形成更完整、更有记忆点的收束,明显回扣前文卖点或整体气质。仍需避免失控特效、明显不稳定画面、强情节表演和高风险复杂动作,但整体风格应明显比保守版更大胆、更有镜头感、更有宣传片气质。`,
+
+  balanced: `分镜设计优先级:第一优先级是整体可用率高,第二优先级是稳定自然,第三优先级是在稳定基础上的画面表现力。既不要过于保守导致视频呆板,也不要过于激进导致失控,应在可用和效果之间取得平衡。
+
+若商品结构简单或卖点较少,应通过整体展示、细节特写、材质质感、功能结构特写、摆放效果、场景收尾等方式自然扩展,同时适度拉开分镜层次,避免整条视频过于平、过于像静态轮播。
+
+在保证主体清晰、商品一致、整体可用的前提下,允许适度使用镜头变化、景别切换、空间层次、简洁场景和更精致的光线表现,提升宣传片质感与视觉吸引力。镜头可以比保守版更丰富,但整体仍应保持稳定、自然、易生成。
+
+如某个卖点可以通过结构特写、局部镜头、摆放效果、静态功能暗示或更有表现力的镜头方式来增强表达,可优先采用兼顾稳定性与展示感的方案。尺寸、大小感、占地感或摆放不占空间,优先通过桌面、柜面、展示架、书本、花瓶等静态参照关系来表达,不要优先使用手持、手握、手托等方式。
+
+描述尽量客观、可直接观察、可被镜头验证。优先使用纹理、表面细节、结构、造型细节、轮廓、开口、连接处、摆放效果、尺寸关系、材质光泽等表达;少用或慎用需要推断的词。结尾分镜尽量回扣前文核心卖点或整体气质,形成完整收束。整体目标是在稳定可用的前提下,让视频更有层次、更有质感、更像一支完整宣传片。`,
+
+  conservative: `分镜设计优先级:第一优先级是可用率高,第二优先级是稳定自然,第三优先级才是画面表现力。优先采用低风险、易生成、主体清晰、结构稳定、背景干净的方案。
+
+若商品结构简单或卖点较少,应优先通过整体展示、细节特写、材质质感、功能结构特写、摆放效果、场景收尾等方式自然扩展,避免重复堆砌相同镜头和相同表述。
+
+分镜优先采用纯商品展示和干净背景方案;默认优先使用缓慢平移、缓慢推进、细节特写、局部切换、简洁摆放展示。默认避免复杂人物正脸、复杂手部交互、连续操作演示、开合动作、倒出动作、投入动作、多主体互动、夸张转场和明显依赖物理运动逻辑的画面。整条视频中,动作演示型分镜最多占 1 段;如无必要可为 0 段。
+
+如某个卖点可以通过结构特写、局部镜头、摆放效果、静态功能暗示来表达,就不要优先使用手持、开盖、投放、倒出、佩戴、安装、拆卸等动作演示。尺寸、大小感、占地感或摆放不占空间,优先通过桌面、柜面、展示架、书本、花瓶等静态参照关系来表达,不要优先使用手持、手握、手托等方式。
+
+描述尽量客观、可直接观察、可被镜头验证。优先使用纹理、表面细节、结构、造型细节、轮廓、开口、连接处、摆放效果、尺寸关系、材质光泽等表达;少用或慎用需要推断的词。结尾分镜尽量回扣前文核心卖点或整体气质,形成完整收束。`
+};
+
+function switchSoft(el, key) {
+  document.querySelectorAll('.soft-tab').forEach(x => x.classList.remove('active'));
+  el.classList.add('active');
+  const ta = document.getElementById('soft-textarea');
+  ta.value = softTemplates[key];
+  document.getElementById('soft-char-count').textContent = '字符数:' + ta.value.length;
+}
+
+// 点击外部关闭所有打开的下拉(用户菜单等基于 <details> 的)
+document.addEventListener('click', (e) => {
+  document.querySelectorAll('details[open]').forEach(d => {
+    if (!d.contains(e.target)) d.removeAttribute('open');
+  });
+});
+</script>
+</body>
+</html>

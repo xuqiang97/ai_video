@@ -1,0 +1,1978 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>任务审核 - AI 商品视频系统</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<style>
+/* ========== 设计令牌(同 task-create) ========== */
+:root {
+  --bg: #F7F8FA;
+  --bg-elevated: #FFFFFF;
+  --bg-hover: #F2F3F5;
+  --bg-active: #E5E6EB;
+  --border: #E5E6EB;
+  --border-strong: #C9CDD4;
+  --text-1: #1D2129;
+  --text-2: #4E5969;
+  --text-3: #86909C;
+  --text-4: #C9CDD4;
+  --brand: #00B96B;
+  --brand-hover: #00A05E;
+  --brand-bg: #E8F8F0;
+  --info: #165DFF;     --info-bg: #E8F3FF;
+  --success: #00B42A;  --success-bg: #E8FFEA;
+  --warning: #FF7D00;  --warning-bg: #FFF7E8;
+  --danger: #F53F3F;   --danger-bg: #FFECE8;
+  --purple: #722ED1;   --purple-bg: #F5E8FF;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.08);
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 8px;
+  --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
+  --font-mono: "SF Mono", "Monaco", "Consolas", monospace;
+  --sidebar-w: 208px;
+  --topbar-h: 56px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-1);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input, textarea, select { font-family: inherit; font-size: inherit; }
+ul, ol { list-style: none; }
+
+/* ========== 布局壳 ========== */
+.app {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  grid-template-rows: var(--topbar-h) 1fr;
+  grid-template-areas: "topbar topbar" "sidebar main";
+  height: 100vh;
+}
+.topbar {
+  grid-area: topbar;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 16px;
+}
+.topbar .logo {
+  display: flex; align-items: center; gap: 8px;
+  font-weight: 600; font-size: 15px; color: var(--text-1);
+}
+.topbar .logo-mark {
+  width: 28px; height: 28px;
+  background: linear-gradient(135deg, var(--brand) 0%, #00D982 100%);
+  border-radius: var(--radius);
+  display: grid; place-items: center;
+  color: white; font-weight: 700; font-size: 14px;
+}
+.topbar .spacer { flex: 1; }
+.topbar .user {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--text-2);
+  padding: 4px 8px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.topbar .user::-webkit-details-marker { display: none; }
+.topbar .user:hover { background: var(--bg-hover); }
+.topbar .avatar {
+  width: 28px; height: 28px;
+  background: var(--brand-bg);
+  color: var(--brand);
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-weight: 600; font-size: 12px;
+}
+
+/* 用户下拉菜单 */
+.user-menu {
+  position: relative;
+  display: inline-block;
+}
+.user-menu-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 200px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  z-index: 100;
+  padding: 4px;
+  overflow: hidden;
+}
+.user-menu-info {
+  padding: 10px 12px;
+}
+.user-menu-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-1);
+  margin-bottom: 2px;
+}
+.user-menu-account {
+  font-size: 12px;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+}
+.user-menu-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0 -4px;
+}
+.user-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  font-size: 13px;
+  color: var(--text-1);
+  border-radius: var(--radius);
+  cursor: pointer;
+  margin: 4px 0;
+  transition: background 0.15s;
+}
+.user-menu-item:hover {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+.user-menu-item .ti {
+  font-size: 16px;
+}
+
+.sidebar {
+  grid-area: sidebar;
+  background: var(--bg-elevated);
+  border-right: 1px solid var(--border);
+  padding: 12px 8px;
+  overflow-y: auto;
+}
+.nav-group-title {
+  font-size: 12px;
+  color: var(--text-3);
+  padding: 12px 12px 6px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  color: var(--text-2);
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 2px;
+  transition: background 0.15s;
+}
+.nav-item:hover { background: var(--bg-hover); color: var(--text-1); }
+.nav-item.active {
+  background: var(--brand-bg);
+  color: var(--brand);
+  font-weight: 500;
+}
+.nav-item .ti { font-size: 18px; }
+
+.main {
+  grid-area: main;
+  overflow: hidden;
+  padding: 16px 20px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========== 通用 ========== */
+.breadcrumb {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--text-3); margin-bottom: 10px;
+  flex-shrink: 0;
+}
+.breadcrumb a:hover { color: var(--brand); }
+.breadcrumb .sep { color: var(--text-4); }
+.breadcrumb .current { color: var(--text-2); font-family: var(--font-mono); }
+
+.card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.card-padded { padding: 16px; }
+.card-title {
+  font-size: 14px; font-weight: 600;
+  color: var(--text-1);
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.card-title .hint { font-size: 12px; color: var(--text-3); font-weight: 400; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  height: 32px;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.btn .ti { font-size: 16px; }
+.btn-primary { background: var(--brand); color: white; }
+.btn-primary:hover { background: var(--brand-hover); }
+.btn-default {
+  background: var(--bg-elevated);
+  border-color: var(--border);
+  color: var(--text-1);
+}
+.btn-default:hover { border-color: var(--brand); color: var(--brand); }
+.btn-text {
+  color: var(--brand);
+  padding: 4px 8px;
+  height: 28px;
+}
+.btn-text:hover { background: var(--brand-bg); }
+.btn-text-default {
+  color: var(--text-2);
+  padding: 4px 8px;
+  height: 28px;
+}
+.btn-text-default:hover { background: var(--bg-hover); color: var(--text-1); }
+.btn-sm { height: 28px; padding: 4px 10px; font-size: 13px; }
+.btn-lg { height: 36px; padding: 8px 18px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.tag {
+  display: inline-flex; align-items: center;
+  padding: 1px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  line-height: 20px;
+  font-weight: 500;
+}
+.tag-default { background: var(--bg-active); color: var(--text-2); }
+.tag-info { background: var(--info-bg); color: var(--info); }
+.tag-success { background: var(--success-bg); color: var(--success); }
+.tag-warning { background: var(--warning-bg); color: var(--warning); }
+.tag-danger { background: var(--danger-bg); color: var(--danger); }
+.tag-brand { background: var(--brand-bg); color: var(--brand); }
+.tag-purple { background: var(--purple-bg); color: var(--purple); }
+
+.dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+.dot-info { background: var(--info); }
+.dot-success { background: var(--success); }
+.dot-warning { background: var(--warning); }
+.dot-danger { background: var(--danger); }
+
+.descriptions {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 16px;
+  row-gap: 8px;
+  font-size: 13px;
+}
+.descriptions dt { color: var(--text-3); }
+.descriptions dd { color: var(--text-1); }
+
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-4 { gap: 4px; } .gap-6 { gap: 6px; } .gap-8 { gap: 8px; } .gap-12 { gap: 12px; } .gap-16 { gap: 16px; } .gap-24 { gap: 24px; }
+.mt-4 { margin-top: 4px; } .mt-8 { margin-top: 8px; } .mt-12 { margin-top: 12px; } .mt-16 { margin-top: 16px; }
+.mb-4 { margin-bottom: 4px; } .mb-8 { margin-bottom: 8px; } .mb-12 { margin-bottom: 12px; } .mb-16 { margin-bottom: 16px; }
+.text-1 { color: var(--text-1); } .text-2 { color: var(--text-2); } .text-3 { color: var(--text-3); }
+.text-xs { font-size: 12px; } .text-sm { font-size: 13px; } .text-md { font-size: 14px; }
+.font-mono { font-family: var(--font-mono); }
+.font-medium { font-weight: 500; } .font-semibold { font-weight: 600; }
+.flex-1 { flex: 1; }
+.text-right { text-align: right; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.input, .textarea, .select {
+  width: 100%;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+  color: var(--text-1);
+  outline: none;
+  transition: border 0.15s;
+  height: 32px;
+}
+.textarea { height: auto; padding: 8px 12px; resize: vertical; min-height: 64px; line-height: 1.6; }
+.input:focus, .textarea:focus, .select:focus { border-color: var(--brand); }
+.input::placeholder, .textarea::placeholder { color: var(--text-4); }
+.form-label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-2);
+  margin-bottom: 6px;
+}
+.form-label .required { color: var(--danger); margin-left: 2px; }
+.form-hint { font-size: 12px; color: var(--text-3); margin-top: 4px; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* ========== 额度 Chip(沿用) ========== */
+.quota-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 4px 12px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.quota-chip:hover { border-color: var(--brand); }
+.quota-chip .quota-label { color: var(--text-3); font-size: 12px; }
+.quota-chip .quota-value { color: var(--text-1); font-weight: 600; font-family: var(--font-mono); }
+.quota-chip .quota-tag {
+  background: var(--bg-elevated);
+  color: var(--text-2);
+  font-size: 11px;
+  padding: 0 6px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+}
+.quota-chip .refresh-btn {
+  display: grid; place-items: center;
+  width: 22px; height: 22px;
+  color: var(--text-3);
+  border-radius: 50%;
+  margin-left: 2px;
+}
+.quota-chip .refresh-btn:hover { background: var(--bg-active); color: var(--text-1); }
+
+/* ========== 任务概要条 ========== */
+.task-summary-bar {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+.task-meta {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+.task-meta-item .label { color: var(--text-3); margin-right: 4px; }
+.task-meta-item .value { color: var(--text-1); }
+
+/* 进度环 */
+.progress-mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.progress-bar-wrap {
+  width: 120px;
+  height: 6px;
+  background: var(--bg-active);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: var(--brand);
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+/* ========== 三栏布局 ========== */
+.review-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr 320px;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+  padding-bottom: 16px;
+}
+.col {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+.col-head {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.col-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  min-height: 0;
+}
+.col-body-pad-0 { padding: 0; }
+
+/* ========== 左栏:段缩略列表 ========== */
+.seg-thumb {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  background: var(--bg-elevated);
+  transition: all 0.15s;
+  margin-bottom: 8px;
+}
+.seg-thumb:hover {
+  border-color: var(--text-3);
+}
+.seg-thumb.active {
+  border-color: var(--brand);
+  background: var(--brand-bg);
+  box-shadow: 0 0 0 3px rgba(0,185,107,0.12);
+}
+/* 状态浅底色(仅当未选中时生效) */
+.seg-thumb.has-regenerating:not(.active) {
+  background: var(--purple-bg);
+  border-color: rgba(114,46,209,0.35);
+}
+.seg-thumb.has-failed:not(.active) {
+  background: var(--danger-bg);
+  border-color: rgba(245,63,63,0.35);
+}
+/* 选中态如果是 regenerating/failed 段,边框用对应状态色 */
+.seg-thumb.active.has-regenerating {
+  border-color: var(--purple);
+  background: var(--purple-bg);
+  box-shadow: 0 0 0 3px rgba(114,46,209,0.15);
+}
+.seg-thumb.active.has-failed {
+  border-color: var(--danger);
+  background: var(--danger-bg);
+  box-shadow: 0 0 0 3px rgba(245,63,63,0.15);
+}
+
+.seg-thumb-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.seg-thumb-title {
+  font-size: 13px;
+  color: var(--text-1);
+  font-weight: 500;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.seg-thumb-title .seg-time {
+  color: var(--text-3);
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 400;
+}
+.seg-thumb-status-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.ver-badge {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-3);
+  background: var(--bg-active);
+  padding: 0 5px;
+  border-radius: 2px;
+  font-weight: 500;
+}
+.thumb-spinner {
+  width: 12px; height: 12px;
+  border: 1.5px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+/* ========== 中栏:大视频 + 提示词 + 审核 ========== */
+.video-player {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(135deg, #6b4615, #d9a04a);
+  border-radius: var(--radius-lg);
+  margin-bottom: 14px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.video-player.v1 { background: linear-gradient(135deg, #1a0f08, #4a2a14); }
+.video-player.v2 { background: linear-gradient(135deg, #5a3a0a, #c98c2a); }
+.video-player.v3 { background: linear-gradient(135deg, #6b4615, #d9a04a); }
+.video-player.v4 { background: linear-gradient(135deg, #7a5520, #e6b558); }
+.video-player.v5 { background: linear-gradient(135deg, #8a6530, #efc673); }
+.video-player.v6 { background: linear-gradient(135deg, #9a7540, #f5d896); }
+.video-player .play-large {
+  width: 56px; height: 56px;
+  background: rgba(0,0,0,0.45);
+  border-radius: 50%;
+  display: grid; place-items: center;
+  cursor: pointer;
+  backdrop-filter: blur(2px);
+  transition: transform 0.15s;
+}
+.video-player .play-large:hover { transform: scale(1.1); }
+.video-player .play-large::after {
+  content: '';
+  width: 0; height: 0;
+  border-left: 16px solid white;
+  border-top: 11px solid transparent;
+  border-bottom: 11px solid transparent;
+  margin-left: 4px;
+}
+.video-player .player-bar {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: 3px;
+  background: rgba(255,255,255,0.25);
+}
+.video-player .player-bar::after {
+  content: '';
+  display: block;
+  width: 30%;
+  height: 100%;
+  background: var(--brand);
+}
+.video-player .seg-time-overlay {
+  position: absolute;
+  left: 10px; top: 10px;
+  background: rgba(0,0,0,0.55);
+  color: white;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+}
+.video-player .duration-overlay {
+  position: absolute;
+  right: 10px; bottom: 14px;
+  background: rgba(0,0,0,0.55);
+  color: white;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+}
+
+/* 版本切换 Tab */
+.ver-tabs {
+  display: flex;
+  gap: 4px;
+}
+.ver-tab {
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--text-2);
+  cursor: pointer;
+  background: var(--bg-elevated);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s;
+}
+.ver-tab:hover { border-color: var(--text-3); }
+
+/* 各状态颜色 — 默认态(未选中):浅色边 + 状态色字 */
+.ver-tab.status-satisfied { color: var(--success); border-color: rgba(0,180,42,0.3); }
+.ver-tab.status-usable { color: var(--info); border-color: rgba(22,93,255,0.3); }
+.ver-tab.status-unusable { color: var(--danger); border-color: rgba(245,63,63,0.3); }
+.ver-tab.status-pending { color: var(--text-2); border-color: var(--border-strong); }
+.ver-tab.status-failed { color: var(--danger); border-color: rgba(245,63,63,0.3); }
+.ver-tab.status-regenerating {
+  color: var(--purple);
+  border-color: var(--purple);
+  background: var(--purple-bg);
+  cursor: default;
+}
+
+/* 选中态:状态色加深 + 浅底 + 加粗 + 阴影 */
+.ver-tab.active.status-satisfied { background: var(--success-bg); border-color: var(--success); font-weight: 600; box-shadow: 0 0 0 2px rgba(0,180,42,0.15); }
+.ver-tab.active.status-usable { background: var(--info-bg); border-color: var(--info); font-weight: 600; box-shadow: 0 0 0 2px rgba(22,93,255,0.15); }
+.ver-tab.active.status-unusable { background: var(--danger-bg); border-color: var(--danger); font-weight: 600; box-shadow: 0 0 0 2px rgba(245,63,63,0.15); }
+.ver-tab.active.status-pending { background: var(--bg-hover); border-color: var(--text-3); color: var(--text-1); font-weight: 600; }
+.ver-tab.active.status-failed { background: var(--danger-bg); border-color: var(--danger); font-weight: 600; box-shadow: 0 0 0 2px rgba(245,63,63,0.15); }
+
+/* 兼容老 generating(已被新 status-regenerating 覆盖,这里保留无害) */
+.ver-tab.generating {
+  background: var(--purple-bg);
+  color: var(--purple);
+  border-color: var(--purple);
+  cursor: default;
+}
+.mini-spinner {
+  width: 10px; height: 10px;
+  border: 1.5px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+.ver-tab .ver-status {
+  font-size: 10px;
+  opacity: 0.85;
+}
+
+/* 提示词展示卡片 */
+.prompt-card {
+  background: #FAFBFC;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.prompt-card .label-script { color: var(--brand); font-weight: 500; }
+.prompt-card .label-rule { color: var(--warning); font-weight: 500; }
+.prompt-card .rule-section {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border);
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+/* 子任务 ID 标签(可复制) */
+.subtask-id {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-elevated);
+  color: var(--text-2);
+  font-size: 11px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+.subtask-id:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+  background: var(--brand-bg);
+}
+.subtask-id .subtask-id-copy-icon {
+  opacity: 0.5;
+  transition: opacity 0.15s;
+}
+.subtask-id:hover .subtask-id-copy-icon {
+  opacity: 1;
+}
+
+/* 复制成功 toast */
+.copy-toast {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  font-size: 13px;
+  color: var(--text-1);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 3000;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s;
+}
+.copy-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* 模板包裹的提示词(中间区视频下方 / 失败段 / 重做 Modal 统一) */
+.prompt-template-wrap {
+  background: #FAFBFC;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.prompt-template-fixed {
+  color: var(--text-3);
+  font-size: 12px;
+  user-select: none;
+  padding: 4px 0;
+}
+.prompt-template-fixed:first-child {
+  color: var(--brand);
+  font-weight: 500;
+  font-size: 13px;
+}
+.prompt-template-fixed:last-child {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border);
+}
+/* 中间可编辑区 — textarea 形态(重做 Modal 用) */
+.prompt-template-editable {
+  margin: 4px 0 8px;
+  background: var(--bg-elevated);
+  border: 1.5px solid var(--brand);
+  box-shadow: 0 0 0 3px var(--brand-bg);
+  font-size: 13px;
+  line-height: 1.7;
+  resize: vertical;
+}
+.prompt-template-editable:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px var(--brand-bg);
+}
+/* 中间只读区 — div 形态(中间区视频下方、失败段用) */
+.prompt-template-readonly {
+  margin: 4px 0 8px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  color: var(--text-1);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* 审核结论按钮 */
+.review-options {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.review-opt {
+  flex: 1;
+  height: 56px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.review-opt:hover { border-color: var(--text-3); }
+.review-opt .ti { font-size: 22px; }
+.review-opt.selected.satisfied {
+  border-color: var(--success);
+  background: var(--success-bg);
+  color: var(--success);
+}
+.review-opt.selected.usable {
+  border-color: var(--info);
+  background: var(--info-bg);
+  color: var(--info);
+}
+.review-opt.selected.unusable {
+  border-color: var(--danger);
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+/* 已审核状态展示卡 */
+.review-result-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+}
+.review-result-card.satisfied { background: var(--success-bg); border-color: var(--success); }
+.review-result-card.usable { background: var(--info-bg); border-color: var(--info); }
+.review-result-card.unusable { background: var(--danger-bg); border-color: var(--danger); }
+
+/* 撤销 toast */
+.undo-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--text-1);
+  color: white;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-lg);
+  z-index: 999;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s;
+  pointer-events: none;
+  font-size: 13px;
+}
+.undo-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.undo-toast .countdown {
+  width: 22px; height: 22px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 3s linear forwards;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.undo-toast button {
+  color: var(--brand);
+  font-weight: 600;
+  font-size: 13px;
+}
+.undo-toast button:hover { color: #4adba0; }
+
+/* 商品图占位 */
+/* 商品图轮播 */
+.img-carousel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.carousel-main {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, #f0d68a, #d4a045);
+  display: grid;
+  place-items: center;
+  cursor: zoom-in;
+  overflow: hidden;
+  transition: transform 0.3s;
+}
+.carousel-placeholder-icon {
+  color: rgba(0,0,0,0.35);
+  font-size: 48px;
+}
+.carousel-counter {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  background: rgba(0,0,0,0.55);
+  color: white;
+  font-size: 11px;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-family: var(--font-mono);
+}
+.carousel-nums {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+.cn-btn {
+  height: 30px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+  color: var(--text-2);
+  font-size: 13px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.cn-btn:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+.cn-btn.active {
+  background: var(--brand);
+  color: white;
+  border-color: var(--brand);
+  font-weight: 600;
+}
+
+/* Lightbox 全屏放大 */
+.lightbox-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.lightbox-mask.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+.lightbox-img {
+  width: min(640px, 80vw);
+  aspect-ratio: 1;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, #f0d68a, #d4a045);
+  display: grid;
+  place-items: center;
+  color: rgba(0,0,0,0.35);
+  font-size: 80px;
+  transition: transform 0.3s;
+}
+.lightbox-close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.95);
+  display: grid; place-items: center;
+  color: var(--text-1);
+  cursor: pointer;
+  font-size: 20px;
+}
+.lightbox-close:hover { background: white; }
+.lightbox-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.95);
+  display: grid; place-items: center;
+  color: var(--text-1);
+  cursor: pointer;
+  font-size: 20px;
+}
+.lightbox-arrow:hover { background: white; }
+.lightbox-arrow.prev { left: 24px; }
+.lightbox-arrow.next { right: 24px; }
+.lightbox-counter {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-size: 14px;
+  font-family: var(--font-mono);
+  background: rgba(0,0,0,0.5);
+  padding: 4px 12px;
+  border-radius: 12px;
+}
+
+/* Modal */
+.modal-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(29,33,41,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+}
+.modal {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+  max-width: 90vw;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.modal-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.modal-body {
+  padding: 18px 20px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.modal-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.close-btn {
+  width: 24px; height: 24px;
+  display: grid; place-items: center;
+  color: var(--text-3);
+  border-radius: 4px;
+}
+.close-btn:hover { background: var(--bg-hover); color: var(--text-1); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- 顶部 -->
+  <header class="topbar">
+    <a class="logo" href="task-list.html"><div class="logo-mark">AI</div><span>AI 商品视频系统</span></a>
+    <div class="spacer"></div>
+    <div class="quota-chip" title="点击刷新">
+      <span class="quota-label">今日额度</span>
+      <span class="quota-value">120 / 600s</span>
+      <span class="quota-tag">Seedance 2.0</span>
+      <span class="refresh-btn" title="刷新"><i class="ti ti-refresh" style="font-size:14px;"></i></span>
+    </div>
+    <details class="user-menu" style="margin-left:8px;">
+      <summary class="user"><div class="avatar">王</div><span>王运营</span><i class="ti ti-chevron-down" style="font-size:14px;"></i></summary>
+      <div class="user-menu-panel">
+        <div class="user-menu-info">
+          <div class="user-menu-name">王运营</div>
+          <div class="user-menu-account">wang.yunying</div>
+        </div>
+        <div class="user-menu-divider"></div>
+        <a class="user-menu-item" href="login.html"><i class="ti ti-logout"></i><span>退出登录</span></a>
+      </div>
+    </details>
+  </header>
+
+  <!-- 侧边栏 -->
+  <aside class="sidebar">
+    <div class="nav-group-title">主链路</div>
+    <a class="nav-item active" href="task-list.html"><i class="ti ti-list-check"></i><span>任务管理</span></a>
+    <a class="nav-item" href="task-create.html"><i class="ti ti-plus"></i><span>新建生成任务</span></a>
+    <div class="nav-group-title">后期工程</div>
+    <a class="nav-item"><i class="ti ti-movie"></i><span>长视频合成</span></a>
+    <a class="nav-item" style="opacity:0.5; cursor:not-allowed;"><i class="ti ti-typography"></i><span>字幕处理</span><span class="tag tag-default" style="margin-left:auto; font-size:10px;">规划中</span></a>
+    <a class="nav-item" style="opacity:0.5; cursor:not-allowed;"><i class="ti ti-music"></i><span>音频处理</span><span class="tag tag-default" style="margin-left:auto; font-size:10px;">规划中</span></a>
+  </aside>
+
+  <main class="main">
+
+    <div class="breadcrumb">
+      <a href="task-list.html">任务管理</a>
+      <span class="sep">/</span>
+      <span class="current">T20260425_000007</span>
+    </div>
+
+    <!-- 任务概要条 -->
+    <div class="task-summary-bar">
+      <div class="flex justify-between items-center mb-12" style="flex-wrap:wrap; gap:12px;">
+        <div class="flex items-center gap-12">
+          <span style="font-size:16px; font-weight:600;" class="font-mono">T20260425_000007</span>
+        </div>
+      </div>
+      <div class="task-meta">
+        <div class="task-meta-item"><span class="label">店铺:</span><span class="value">Amazon-Z01097-US</span></div>
+        <div class="task-meta-item"><span class="label">ASIN:</span><span class="value font-mono">B08DNRKJX7</span></div>
+        <div class="task-meta-item"><span class="label">时长:</span><span class="value">30s · 6 段</span></div>
+        <div class="task-meta-item"><span class="label">脚本模型:</span><span class="value">GPT-5.4</span></div>
+        <div class="task-meta-item"><span class="label">风格:</span><span class="value"><span class="tag tag-warning" style="font-size:11px;">激进版</span></span></div>
+        <div class="task-meta-item"><span class="label">视频模型:</span><span class="value">Seedance 2.0</span></div>
+        <div class="task-meta-item"><span class="label">创建:</span><span class="value font-mono" style="font-size:12px;">2026-04-25 14:35:21</span></div>
+        <div class="task-meta-item"><span class="label">更新:</span><span class="value font-mono" style="font-size:12px;">2026-04-25 14:55:30</span></div>
+      </div>
+    </div>
+
+    <!-- 三栏 -->
+    <div class="review-layout">
+
+      <!-- 左:段缩略 -->
+      <div class="col">
+        <div class="col-head">
+          <span>分镜片段</span>
+          <span class="text-xs text-3" style="font-weight:400;">6 段</span>
+        </div>
+        <div class="col-body" id="seg-list">
+
+          <div class="seg-thumb" data-seg="1" data-status="satisfied" data-ver="v1">
+            <div class="seg-thumb-row">
+              <span class="seg-thumb-title">第 1 段 <span class="seg-time">0–5s</span></span>
+            </div>
+            <div class="seg-thumb-status-row">
+              <span class="tag tag-success" style="font-size:11px;">满意</span>
+              <span class="ver-badge">v1</span>
+            </div>
+          </div>
+
+          <div class="seg-thumb" data-seg="2" data-status="usable" data-ver="v1">
+            <div class="seg-thumb-row">
+              <span class="seg-thumb-title">第 2 段 <span class="seg-time">5–10s</span></span>
+            </div>
+            <div class="seg-thumb-status-row">
+              <span class="tag tag-info" style="font-size:11px;">可用</span>
+              <span class="ver-badge">v1</span>
+            </div>
+          </div>
+
+          <div class="seg-thumb active has-regenerating" data-seg="3" data-status="regenerating" data-ver="v3-gen">
+            <div class="seg-thumb-row">
+              <span class="seg-thumb-title">第 3 段 <span class="seg-time">10–15s</span></span>
+            </div>
+            <div class="seg-thumb-status-row">
+              <span class="tag tag-purple" style="font-size:11px; display:inline-flex; align-items:center; gap:4px;"><span class="thumb-spinner" style="color:var(--purple);"></span>v3 重做中</span>
+              <span class="text-xs text-3" style="font-size:10px; font-family:var(--font-mono);">已耗时 <span class="elapsed-timer" data-base="323" data-fmt="short">05:23</span></span>
+            </div>
+            <div class="text-xs text-3" style="font-size:10px; margin-top:2px;">历史:v2 不可用,v1 不可用</div>
+          </div>
+
+          <div class="seg-thumb" data-seg="4" data-status="pending" data-ver="v1">
+            <div class="seg-thumb-row">
+              <span class="seg-thumb-title">第 4 段 <span class="seg-time">15–20s</span></span>
+            </div>
+            <div class="seg-thumb-status-row">
+              <span class="tag tag-default" style="font-size:11px;">待审核</span>
+              <span class="ver-badge">v1</span>
+            </div>
+          </div>
+
+          <div class="seg-thumb has-regenerating" data-seg="5" data-status="regenerating" data-ver="v2-gen">
+            <div class="seg-thumb-row">
+              <span class="seg-thumb-title">第 5 段 <span class="seg-time">20–25s</span></span>
+            </div>
+            <div class="seg-thumb-status-row">
+              <span class="tag tag-purple" style="font-size:11px; display:inline-flex; align-items:center; gap:4px;"><span class="thumb-spinner" style="color:var(--purple);"></span>v2 重做中</span>
+              <span class="text-xs text-3" style="font-size:10px; font-family:var(--font-mono);">已耗时 <span class="elapsed-timer" data-base="425" data-fmt="short">07:05</span></span>
+            </div>
+            <div class="text-xs text-3" style="font-size:10px; margin-top:2px;">历史:v1 不可用</div>
+          </div>
+
+          <div class="seg-thumb has-failed" data-seg="6" data-status="failed">
+            <div class="seg-thumb-row">
+              <span class="seg-thumb-title">第 6 段 <span class="seg-time">25–30s</span></span>
+            </div>
+            <div class="seg-thumb-status-row">
+              <span class="tag tag-danger" style="font-size:11px; display:inline-flex; align-items:center; gap:4px;"><i class="ti ti-alert-triangle" style="font-size:12px;"></i>失败</span>
+              <span class="ver-badge">v1</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 中:大视频 + 提示词 + 审核 (内容由 JS 根据当前段渲染) -->
+      <div class="col">
+        <div class="col-head" id="mid-head">
+          <!-- 由 renderCurrentSeg() 填充 -->
+        </div>
+        <div class="col-body" id="mid-body">
+          <!-- 由 renderCurrentSeg() 填充 -->
+        </div>
+      </div>
+
+      <!-- 右:商品图文资料 + 任务配置 -->
+      <div class="col">
+        <div class="col-head">
+          <span>商品图文资料</span>
+        </div>
+        <div class="col-body">
+
+          <!-- 商品图轮播(主图 + 数字切换) -->
+          <div class="img-carousel">
+            <div class="carousel-main" id="carousel-main" onclick="openLightbox()">
+              <i class="ti ti-photo carousel-placeholder-icon"></i>
+              <div class="carousel-counter" id="carousel-counter">1 / 5</div>
+            </div>
+            <div class="carousel-nums" id="carousel-nums">
+              <button class="cn-btn active" data-idx="0" onclick="switchImg(0)">1</button>
+              <button class="cn-btn" data-idx="1" onclick="switchImg(1)">2</button>
+              <button class="cn-btn" data-idx="2" onclick="switchImg(2)">3</button>
+              <button class="cn-btn" data-idx="3" onclick="switchImg(3)">4</button>
+              <button class="cn-btn" data-idx="4" onclick="switchImg(4)">5</button>
+            </div>
+          </div>
+
+          <!-- 文本资料 -->
+          <dl class="descriptions mt-12" style="font-size:12px;">
+            <dt>标题</dt>
+            <dd style="line-height:1.6;">生肖马陶瓷存钱罐可取硬币储蓄罐摆件(立马聚财2025h-04)</dd>
+            <dt>类目</dt>
+            <dd>Toys & Games / Money Banks</dd>
+            <dt>尺寸</dt>
+            <dd>23.5 × 21.5 × 10 CM</dd>
+          </dl>
+
+          <div class="card-title mt-16" style="font-size:13px;">卖点</div>
+          <ul style="list-style:disc; padding-left:18px; line-height:1.7; font-size:12px; color:var(--text-2);">
+            <li>精美手工</li>
+            <li>生肖马设计生动传神</li>
+            <li>陶瓷材质色泽光亮持久</li>
+            <li>背部投币口兼具储蓄功能</li>
+            <li>家居装饰 / 节庆赠礼</li>
+          </ul>
+
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+</div>
+
+<!-- Lightbox 全屏图片放大 -->
+<div class="lightbox-mask" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="event.stopPropagation(); closeLightbox()"><i class="ti ti-x"></i></button>
+  <button class="lightbox-arrow prev" onclick="event.stopPropagation(); lightboxPrev()"><i class="ti ti-chevron-left"></i></button>
+  <div class="lightbox-img" id="lightbox-img" onclick="event.stopPropagation()">
+    <i class="ti ti-photo"></i>
+  </div>
+  <button class="lightbox-arrow next" onclick="event.stopPropagation(); lightboxNext()"><i class="ti ti-chevron-right"></i></button>
+  <div class="lightbox-counter" id="lightbox-counter">1 / 5</div>
+</div>
+
+<!-- 撤销 toast -->
+<div class="undo-toast" id="undo-toast">
+  <div class="countdown" id="undo-countdown"></div>
+  <span>已提交「<span id="undo-conclusion">满意</span>」 · 已自动跳到下一段</span>
+  <button onclick="undoSubmit()">撤回</button>
+</div>
+
+<!-- 重做 Modal -->
+<div class="modal-mask" id="redo-modal" style="display:none;" onclick="closeRedoModal()">
+  <div class="modal" style="width:640px;" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span><i class="ti ti-refresh" style="color:var(--brand); margin-right:6px;"></i><span id="redo-modal-title">重做第 3 段(将生成 v3)</span></span>
+      <button class="close-btn" onclick="closeRedoModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="card mb-12" style="background:var(--info-bg); border-color:var(--info); padding:10px 14px;">
+        <div class="flex items-start gap-8 text-xs" style="color:var(--text-2); line-height:1.7;">
+          <i class="ti ti-info-circle" style="color:var(--info); font-size:14px; margin-top:2px;"></i>
+          <span id="redo-modal-info">重做将<strong>消耗 5 秒</strong>视频额度,生成的新版本会标记为 v3,旧版本(v1/v2)仍保留可查看。</span>
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-bottom:12px;">
+        <label class="form-label">本段最终提示词<span class="text-3" style="font-weight:400; font-size:12px;">(只可编辑中间分镜脚本部分,前后约束固定)</span></label>
+        <div class="prompt-template-wrap">
+          <div class="prompt-template-fixed">【亚马逊美国站点商品卖点介绍视频5s分镜脚本】:</div>
+          <textarea class="textarea prompt-template-editable" id="redo-prompt" style="min-height:140px; line-height:1.7;">进入细节特写,镜头沿马身缓慢下移,展示鞍饰、底座纹样、元宝造型和周围装饰起伏,强调陶瓷材质的光泽感与完整做工;通过反光和细节稳定呈现其颜色与亮泽长久保持的质感。</textarea>
+          <div class="prompt-template-fixed">【要求】:虽然分镜脚本是中文,但视频画面中禁止出现任何中文字幕、中文元素、品牌、Logo、水印及任何亚马逊违规高风险元素。严格忠于商品图片和分镜脚本,只展示已明确给出的商品外观、结构和卖点,不新增无关内容,保持商品一致。</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" id="redo-modal-reason-label">本次重做原因<span class="text-3" style="font-weight:400; font-size:12px;">(可选)</span></label>
+        <input class="input" id="redo-reason" placeholder="例如:画面镜头转得过快,要求更稳定一点">
+      </div>
+
+      <div class="card" style="background:var(--success-bg); border-color:var(--success); padding:10px 14px; margin-top:12px;">
+        <div class="flex items-center gap-8 text-xs" style="color:var(--text-2);">
+          <i class="ti ti-circle-check-filled" style="color:var(--success); font-size:14px;"></i>
+          <span>额度充足:当前剩余 480 秒,本次需 5 秒,完成后剩余 475 秒</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div style="flex:1;"></div>
+      <button class="btn btn-default" onclick="closeRedoModal()">取消</button>
+      <button class="btn btn-primary" onclick="confirmRedo()"><i class="ti ti-send"></i> <span id="redo-modal-submit-label">提交重做</span></button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// 段数据(每段一个 versions 数组,每个版本独立状态)
+// 段总状态 = 最新版本的状态
+// 默认选中段 = 第 3 段;默认选中版本 = 该段最新版本
+// ============================================================
+const segData = {
+  1: {
+    versions: [
+      { v: 1, subTaskId: 'S20260425_000001', status: 'satisfied', conclusion: '满意', note: '画面整体很出彩,首段开场金光感强,商品轮廓清晰,镜头推进稳定,作为视频开场非常合适。', prompt: '暖金色光影中,金色陶瓷生肖马摆件从暗处缓慢显现,镜头由远到近推进,聚焦昂首跃起的整体轮廓与立体底座,先建立精致、吉祥、吸睛的第一印象。', videoBg: 'v1', generatedAt: '2026-04-25 14:42:18', elapsed: 508 }
+    ]
+  },
+  2: {
+    versions: [
+      { v: 1, subTaskId: 'S20260425_000002', status: 'usable', conclusion: '可用', note: '镜头环绕角度合理,表现了商品的立体感,但鬃毛细节略糊,整体可用但不够精致。', prompt: '镜头切到侧前方中近景,缓慢环绕马头、鬃毛、前蹄等关键造型,展现立体雕塑感与陶瓷光泽。', videoBg: 'v2', generatedAt: '2026-04-25 14:43:55', elapsed: 572 }
+    ]
+  },
+  3: {
+    versions: [
+      { v: 1, subTaskId: 'S20260425_000003', status: 'unusable', conclusion: '不可用', note: '陶瓷光泽感不够,且镜头下移过快,关键的元宝造型一闪而过看不清。', prompt: '进入细节特写,镜头沿马身缓慢下移,展示鞍饰、底座纹样、元宝造型……', videoBg: 'v1', generatedAt: '2026-04-25 14:44:10', elapsed: 635 },
+      { v: 2, subTaskId: 'S20260425_000007', status: 'unusable', conclusion: '不可用', note: 'v2 重做后整体更稳,但底座纹样仍不够清晰,商品一致性有偏差。', prompt: '进入细节特写,镜头沿马身缓慢下移,放慢节奏,展示鞍饰、底座纹样、元宝造型和周围装饰起伏,强调陶瓷材质的光泽感与完整做工;通过反光和细节稳定呈现其颜色与亮泽长久保持的质感。', videoBg: 'v3', generatedAt: '2026-04-25 14:48:22', elapsed: 458 },
+      { v: 3, subTaskId: 'S20260425_000009', status: 'regenerating', prompt: '细节特写,镜头沿马身极慢下移,清晰呈现鞍饰、底座纹样和元宝造型,光线反射强化陶瓷光泽,整体节奏舒缓稳定。', elapsedBaseSec: 323 }
+    ]
+  },
+  4: {
+    versions: [
+      { v: 1, subTaskId: 'S20260425_000004', status: 'pending', prompt: '镜头转向背侧与后方,清晰带出背部投币口结构,圆形开口柔和高光,展示其作为存钱罐的实用功能。', videoBg: 'v4', generatedAt: '2026-04-25 14:44:33', elapsed: 390 }
+    ]
+  },
+  5: {
+    versions: [
+      { v: 1, subTaskId: 'S20260425_000005', status: 'unusable', conclusion: '不可用', note: '场景物件干扰主体,马摆件不够突出,陈列感反而稀释了商品。', prompt: '生活化陈列镜头中,这只金色生肖马被放在整洁桌面与置物架之间,周围有书本、花瓶等装饰,营造家居氛围。', videoBg: 'v5', generatedAt: '2026-04-25 14:45:11', elapsed: 693 },
+      { v: 2, subTaskId: 'S20260425_000008', status: 'regenerating', prompt: '生活化陈列镜头中,这只金色生肖马被放在整洁桌面正中央,周围装饰简洁不抢戏,主体突出,强调其作为家居摆件的精致感。', elapsedBaseSec: 425 }
+    ]
+  },
+  6: {
+    versions: [
+      { v: 1, subTaskId: 'S20260425_000006', status: 'failed', prompt: '结尾回到英雄镜头,马摆件置于柔和节庆氛围中,光线渐亮,作为整条视频的视觉收束。', error: '视频生成接口超时(>60s 无响应),请重试', failedAt: '2026-04-25 14:46:07' }
+    ]
+  }
+};
+
+const conclusionMap = {
+  satisfied: { text: '满意', tagClass: 'tag-success', dotClass: 'dot-success', icon: 'mood-happy', cardClass: 'satisfied', color: 'var(--success)' },
+  usable: { text: '可用', tagClass: 'tag-info', dotClass: 'dot-info', icon: 'mood-neutral', cardClass: 'usable', color: 'var(--info)' },
+  unusable: { text: '不可用', tagClass: 'tag-danger', dotClass: 'dot-danger', icon: 'mood-sad', cardClass: 'unusable', color: 'var(--danger)' }
+};
+
+// 当前选中段 / 当前选中版本(在该段 versions 数组里的索引)
+let currentSeg = 3;
+let currentVerIdx = 1;  // 第3段默认选中 v2(index=1)— 因为最新 v3 在生成中,不能播放
+
+// ============================================================
+// 渲染中间区 — 完整刷新 col-head 和 col-body
+// ============================================================
+function renderCurrentSeg(seg, verIdx) {
+  currentSeg = seg;
+  const data = segData[seg];
+
+  // 决定要展示的版本:如果 verIdx 没传,默认最新版本(数组末尾);
+  // 但如果最新版本是 generating/failed,且有更老的成功版本可看,聚焦更老的
+  if (verIdx === undefined) {
+    verIdx = data.versions.length - 1;
+    const latest = data.versions[verIdx];
+    if (latest.status === 'regenerating' && verIdx > 0) {
+      verIdx = verIdx - 1; // 跳回上一个有视频的版本
+    }
+  }
+  currentVerIdx = verIdx;
+
+  const ver = data.versions[verIdx];
+  const segRange = `${(seg - 1) * 5}–${seg * 5}s`;
+  const segNo = `第 ${seg} 段`;
+
+  // ============= 渲染 col-head =============
+  const segStatus = computeSegStatus(data);
+  let headHTML = `
+    <div class="flex items-center gap-8">
+      <span>${segNo} · ${segRange}</span>
+      ${renderStatusTag(segStatus)}
+    </div>
+    <div class="ver-tabs">${renderVerTabs(data, verIdx)}</div>
+  `;
+  document.getElementById('mid-head').innerHTML = headHTML;
+
+  // ============= 渲染 col-body =============
+  let bodyHTML = '';
+
+  if (ver.status === 'failed') {
+    bodyHTML = renderFailedBody(seg, ver);
+  } else if (ver.status === 'regenerating') {
+    bodyHTML = renderRegeneratingBody(seg, ver, data);
+  } else {
+    // 有视频可看(satisfied / usable / unusable / pending)
+    bodyHTML = renderVideoBody(seg, ver, data, segStatus);
+  }
+  document.getElementById('mid-body').innerHTML = bodyHTML;
+}
+
+// 秒数格式化为"X 分 Y 秒"
+function formatElapsed(secs) {
+  if (!secs && secs !== 0) return '—';
+  if (secs < 60) return secs + ' 秒';
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  return s === 0 ? `${m} 分` : `${m} 分 ${s} 秒`;
+}
+
+// 用于"已耗时"实时滚动显示 — 长格式 "07m 05s"
+function formatElapsedLong(secs) {
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  return String(m).padStart(2, '0') + 'm ' + String(s).padStart(2, '0') + 's';
+}
+
+// 用于左侧缩略 — 短格式 "07:05"
+function formatElapsedShort(secs) {
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+}
+
+// 渲染子任务 ID 标签(带复制图标)
+function renderSubTaskId(subTaskId) {
+  if (!subTaskId) return '';
+  return `<span class="subtask-id" onclick="copySubTaskId(event, '${subTaskId}')" title="点击复制子任务 ID">
+    <i class="ti ti-id" style="font-size:11px;"></i>
+    <span class="subtask-id-text">${subTaskId}</span>
+    <i class="ti ti-copy subtask-id-copy-icon" style="font-size:11px;"></i>
+  </span>`;
+}
+
+// 复制子任务 ID 到剪贴板 + 短 toast 提示
+function copySubTaskId(event, id) {
+  event.stopPropagation();
+  navigator.clipboard.writeText(id).then(() => {
+    showCopyToast(id);
+  }).catch(() => {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = id;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showCopyToast(id);
+  });
+}
+
+function showCopyToast(id) {
+  let toast = document.getElementById('copy-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'copy-toast';
+    toast.className = 'copy-toast';
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML = `<i class="ti ti-circle-check-filled" style="color:var(--success);"></i> 已复制 <span style="font-family:var(--font-mono); font-weight:500;">${id}</span>`;
+  toast.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => toast.classList.remove('show'), 1800);
+}
+
+// 段总状态(依据最新版本)
+function computeSegStatus(data) {
+  const latest = data.versions[data.versions.length - 1];
+  return latest.status;
+}
+
+// 状态 tag
+function renderStatusTag(status) {
+  if (status === 'pending') {
+    return '<span class="tag tag-default" style="font-size:11px;">待审核</span>';
+  } else if (status === 'failed') {
+    return '<span class="tag tag-danger" style="font-size:11px;"><span class="dot dot-danger"></span>失败</span>';
+  } else if (status === 'regenerating') {
+    return '<span class="tag tag-purple" style="font-size:11px;"><span class="mini-spinner" style="margin-right:4px;"></span>重做中</span>';
+  } else {
+    const m = conclusionMap[status];
+    return `<span class="tag ${m.tagClass}" style="font-size:11px;"><span class="dot ${m.dotClass}"></span>${m.text}</span>`;
+  }
+}
+
+// 版本切换 Tab
+function renderVerTabs(data, currentIdx) {
+  return data.versions.map((v, idx) => {
+    const isActive = idx === currentIdx;
+    const isGen = v.status === 'regenerating';
+    const isFail = v.status === 'failed';
+    // 当前 = 修改结论中也算选中,但不要给"当前"label(那会冲突)
+    let label;
+    if (v.status === 'regenerating') label = '生成中';
+    else if (v.status === 'failed') label = '失败';
+    else if (v.status === 'pending') label = '待审核';
+    else label = conclusionMap[v.status].text;
+    if (isActive && !isGen && !isFail) label += ' · 当前';
+
+    let cls = 'ver-tab status-' + v.status;
+    if (isActive) cls += ' active';
+
+    let inner = '';
+    if (isGen) inner = '<span class="mini-spinner"></span>';
+    inner += `v${v.v}<span class="ver-status">${label}</span>`;
+    return `<div class="${cls}" onclick="switchVer(${idx})">${inner}</div>`;
+  }).join('');
+}
+
+// =========== body 三种形态 ===========
+
+// 形态 1:有视频可看的形态(已审核 / 待审核)
+function renderVideoBody(seg, ver, data, segStatus) {
+  const segRange = `${(seg - 1) * 5}–${seg * 5}s`;
+  const videoBg = ver.videoBg || 'v3';
+
+  let videoHTML = `
+    <div class="video-player ${videoBg}">
+      <span class="seg-time-overlay">第 ${seg} 段 · ${segRange}</span>
+      <div class="play-large"></div>
+      <span class="duration-overlay">00:00 / 00:05</span>
+      <div class="player-bar"></div>
+    </div>
+  `;
+
+  let promptHTML = `
+    <div class="card mb-12" style="padding:12px 14px;">
+      <div class="flex items-center justify-between mb-8" style="gap:8px; flex-wrap:wrap;">
+        <div class="flex items-center gap-8">
+          <span class="text-sm font-medium">本段最终提示词</span>
+          ${renderSubTaskId(ver.subTaskId)}
+        </div>
+        <span class="text-xs text-3"><i class="ti ti-clock"></i> v${ver.v} 生成耗时 ${formatElapsed(ver.elapsed)} · 生成时间 ${ver.generatedAt}</span>
+      </div>
+      <div class="prompt-template-wrap">
+        <div class="prompt-template-fixed">【亚马逊美国站点商品卖点介绍视频5s分镜脚本】:</div>
+        <div class="prompt-template-readonly">${ver.prompt}</div>
+        <div class="prompt-template-fixed">【要求】:虽然分镜脚本是中文,但视频画面中禁止出现任何中文字幕、中文元素、品牌、Logo、水印及任何亚马逊违规高风险元素。严格忠于商品图片和分镜脚本,只展示已明确给出的商品外观、结构和卖点,不新增无关内容,保持商品一致。</div>
+      </div>
+    </div>
+  `;
+
+  // 审核区:看版本状态决定形态
+  let reviewHTML = '';
+  if (ver.status === 'pending' || ver._editing) {
+    reviewHTML = renderPendingReview(seg, ver);
+  } else {
+    // satisfied / usable / unusable
+    reviewHTML = renderReviewedCard(seg, ver, data, segStatus);
+  }
+
+  return videoHTML + promptHTML + reviewHTML;
+}
+
+// 形态 2:失败形态(无视频)
+function renderFailedBody(seg, ver) {
+  const segRange = `${(seg - 1) * 5}–${seg * 5}s`;
+  return `
+    <div class="card review-result-card unusable" style="padding:18px; margin-bottom:12px;">
+      <div class="flex items-center gap-12 mb-12">
+        <i class="ti ti-alert-triangle" style="font-size:32px; color:var(--danger);"></i>
+        <div style="flex:1;">
+          <div class="font-medium" style="color:var(--danger); font-size:16px;">第 ${seg} 段(${segRange})视频生成失败</div>
+          <div class="text-sm text-2 mt-4">v${ver.v} 调用 Seedance 2.0 失败 · ${ver.failedAt}</div>
+        </div>
+      </div>
+      <div class="card mt-12" style="padding:10px 14px; background:var(--bg-elevated); border:1px dashed var(--border);">
+        <div class="text-xs text-3 mb-4">错误信息</div>
+        <div class="text-sm" style="color:var(--text-1); line-height:1.6;">${ver.error}</div>
+      </div>
+      <div class="card mt-12" style="padding:10px 14px; background:var(--bg-elevated); border:1px solid var(--border);">
+        <div class="flex items-center justify-between mb-8" style="gap:8px; flex-wrap:wrap;">
+          <div class="flex items-center gap-8">
+            <span class="text-xs text-3">本段最终提示词(可在重试前编辑)</span>
+            ${renderSubTaskId(ver.subTaskId)}
+          </div>
+        </div>
+        <div class="prompt-template-wrap">
+          <div class="prompt-template-fixed">【亚马逊美国站点商品卖点介绍视频5s分镜脚本】:</div>
+          <div class="prompt-template-readonly">${ver.prompt}</div>
+          <div class="prompt-template-fixed">【要求】:虽然分镜脚本是中文,但视频画面中禁止出现任何中文字幕、中文元素、品牌、Logo、水印及任何亚马逊违规高风险元素。严格忠于商品图片和分镜脚本,只展示已明确给出的商品外观、结构和卖点,不新增无关内容,保持商品一致。</div>
+        </div>
+      </div>
+      <div class="card mt-12" style="padding:10px 14px; background:var(--success-bg); border-color:var(--success); display:flex; align-items:center; gap:8px;">
+        <i class="ti ti-circle-check-filled" style="color:var(--success); font-size:16px;"></i>
+        <span class="text-sm" style="color:var(--text-1);"><strong>上次生成预占的 5s 额度已返还</strong></span>
+      </div>
+      <div class="flex justify-end gap-8 mt-12">
+        <button class="btn btn-default" onclick="openRetryModal(${seg})"><i class="ti ti-edit"></i>编辑提示词后重试</button>
+        <button class="btn btn-primary" onclick="confirmRetry(${seg})"><i class="ti ti-refresh"></i>直接重试</button>
+      </div>
+    </div>
+  `;
+}
+
+// 形态 3:重做中形态(无可看视频时)
+function renderRegeneratingBody(seg, ver, data) {
+  const segRange = `${(seg - 1) * 5}–${seg * 5}s`;
+  // 是否有更老的版本可参考
+  const olderVersions = data.versions.slice(0, data.versions.length - 1);
+  let olderHint = '';
+  if (olderVersions.length > 0) {
+    olderHint = `<div class="text-sm text-2 mt-8">已有 ${olderVersions.length} 个历史版本(<a class="link-brand" onclick="switchVer(${olderVersions.length - 1})" style="color:var(--brand); cursor:pointer; text-decoration:underline;">点击切到 v${olderVersions[olderVersions.length-1].v} 查看</a>)</div>`;
+  }
+  // 计算"已耗时"基准秒数(从演示数据 elapsedBaseSec 起算,JS 定时器会每秒 +1)
+  const baseSec = ver.elapsedBaseSec || 0;
+  return `
+    <div class="card" style="padding:32px 18px; text-align:center; background:var(--purple-bg); border-color:var(--purple); margin-bottom:12px;">
+      <div class="thumb-spinner" style="width:48px; height:48px; border-width:3px; border-color:rgba(114,46,209,0.25); border-top-color:var(--purple); margin:0 auto 16px;"></div>
+      <div class="font-medium" style="font-size:16px; color:var(--purple);">第 ${seg} 段 v${ver.v} 生成中</div>
+      <div class="text-sm text-2 mt-8" style="font-family:var(--font-mono);">已耗时 <span class="elapsed-timer" data-base="${baseSec}" data-fmt="long">${formatElapsedLong(baseSec)}</span></div>
+      <div class="text-sm text-3 mt-4">预计 5–15 分钟生成完毕</div>
+      ${olderHint}
+    </div>
+    <div class="card" style="padding:12px 14px;">
+      <div class="flex items-center justify-between mb-8" style="gap:8px; flex-wrap:wrap;">
+        <div class="flex items-center gap-8">
+          <span class="text-xs text-3">本次重做使用的提示词</span>
+          ${renderSubTaskId(ver.subTaskId)}
+        </div>
+      </div>
+      <div class="prompt-template-wrap">
+        <div class="prompt-template-fixed">【亚马逊美国站点商品卖点介绍视频5s分镜脚本】:</div>
+        <div class="prompt-template-readonly">${ver.prompt}</div>
+        <div class="prompt-template-fixed">【要求】:虽然分镜脚本是中文,但视频画面中禁止出现任何中文字幕、中文元素、品牌、Logo、水印及任何亚马逊违规高风险元素。严格忠于商品图片和分镜脚本,只展示已明确给出的商品外观、结构和卖点,不新增无关内容,保持商品一致。</div>
+      </div>
+    </div>
+  `;
+}
+
+// 已审核结论卡(satisfied / usable / unusable)
+function renderReviewedCard(seg, ver, data, segStatus) {
+  const m = conclusionMap[ver.status];
+  // 看段是否有 regenerating 版本(即用户已点过重做,正在生成新版本)
+  const hasRegenerating = data.versions.some(v => v.status === 'regenerating');
+
+  // 修改结论按钮:永远可用(改的是该版本自己的结论,跟其他版本无关)
+  const editBtn = `<button class="btn-text btn" onclick="reEditReview(${seg}, ${data.versions.indexOf(ver)})"><i class="ti ti-edit"></i>修改结论</button>`;
+
+  // 重做按钮:段内已有版本在生成中时禁用(避免并发多版本生成)
+  const redoBtn = hasRegenerating
+    ? `<button class="btn btn-default btn-sm" disabled style="opacity:0.6; cursor:not-allowed;" title="本段已有版本在生成中"><span class="mini-spinner" style="margin-right:4px;"></span>v${data.versions[data.versions.length-1].v} 重做中…</button>`
+    : `<button class="btn btn-primary btn-sm" onclick="openRedoModal(${seg})"><i class="ti ti-refresh"></i>重做本段(消耗 5s 额度)</button>`;
+
+  const regenHint = hasRegenerating
+    ? `<div class="text-xs text-3 mt-8" style="border-top:1px dashed var(--border); padding-top:8px;"><i class="ti ti-info-circle"></i> v${data.versions[data.versions.length-1].v} 生成中(预计 5–15 分钟),完成后会自动切换进入审核</div>`
+    : '';
+
+  return `
+    <div class="card review-result-card ${m.cardClass}" style="margin-bottom:12px;">
+      <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-8">
+          <i class="ti ti-${m.icon}" style="font-size:18px; color:${m.color};"></i>
+          <span class="font-medium" style="color:${m.color};">v${ver.v} 已标记为「${m.text}」</span>
+        </div>
+        <div class="flex gap-8">
+          ${editBtn}
+          ${redoBtn}
+        </div>
+      </div>
+      <div class="text-sm" style="line-height:1.7; color:var(--text-2);">
+        <span class="text-3">备注:</span>${ver.note}
+      </div>
+      ${regenHint}
+    </div>
+  `;
+}
+
+// 待审核形态(pending) — 兼容"修改结论"模式(回显之前结论 + 加取消按钮)
+function renderPendingReview(seg, ver) {
+  const isEditing = ver._editing === true;
+  // 回显数据(只在"修改结论"模式下有)
+  const prevType = isEditing ? ver._origStatus : null;
+  const prevNote = isEditing ? (ver._origNote || '') : '';
+
+  // 三档按钮:修改模式下预选中之前那档
+  const optBtn = (type, icon, label) => {
+    const selected = (prevType === type) ? ` selected ${type}` : '';
+    return `<div class="review-opt${selected}" data-type="${type}" onclick="selectOption(this)">
+        <i class="ti ti-${icon}"></i>
+        <span class="text-sm font-medium">${label}</span>
+      </div>`;
+  };
+
+  const cardTitle = isEditing
+    ? `修改第 ${seg} 段 v${ver.v} 审核结论 <span class="hint" style="color:var(--text-3); font-weight:400; font-size:12px;">三档必选</span>`
+    : `审核结论 <span class="hint" style="color:var(--text-3); font-weight:400; font-size:12px;">三档必选</span>`;
+
+  const submitLabel = isEditing ? '保存修改' : '提交审核';
+  const cancelBtn = isEditing
+    ? `<button class="btn btn-default" onclick="cancelReviewEdit()">取消</button>`
+    : '';
+
+  return `
+    <div class="card-title">${cardTitle}</div>
+    <div class="review-options">
+      ${optBtn('satisfied', 'mood-happy', '满意')}
+      ${optBtn('usable', 'mood-neutral', '可用')}
+      ${optBtn('unusable', 'mood-sad', '不可用')}
+    </div>
+    <div style="margin-bottom:12px;">
+      <label class="form-label">备注原因<span class="required">*</span></label>
+      <textarea class="textarea" id="review-note" placeholder="请说明审核结论的具体原因(必填,数据沉淀关键依据)" style="min-height:80px;">${prevNote}</textarea>
+    </div>
+    <div class="flex justify-between items-center">
+      <div class="text-xs text-3">
+        <i class="ti ti-info-circle"></i> 提交后系统会沉淀数据,优化未来的脚本生成策略
+      </div>
+      <div class="flex gap-8">
+        ${cancelBtn}
+        <button class="btn btn-primary" onclick="submitReview()">${submitLabel} <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// 交互函数
+// ============================================================
+
+// 切段(左侧缩略列表点击)
+document.querySelectorAll('.seg-thumb').forEach(el => {
+  el.addEventListener('click', () => {
+    const seg = parseInt(el.dataset.seg);
+    document.querySelectorAll('.seg-thumb').forEach(x => x.classList.remove('active'));
+    el.classList.add('active');
+    renderCurrentSeg(seg);
+  });
+});
+
+// 切版本(中间区顶部 ver-tab 点击)
+function switchVer(verIdx) {
+  renderCurrentSeg(currentSeg, verIdx);
+}
+
+// 选审核档位(待审核形态下的三档按钮)
+function selectOption(el) {
+  document.querySelectorAll('.review-opt').forEach(x => {
+    x.classList.remove('selected', 'satisfied', 'usable', 'unusable');
+  });
+  const type = el.dataset.type;
+  el.classList.add('selected', type);
+}
+
+// 修改结论(已审核 → 进入编辑形态,保留原结论用于回显)
+function reEditReview(seg, verIdx) {
+  const ver = segData[seg].versions[verIdx];
+  // 不修改 status,只标记 _editing,把原值存到 _orig* 用于回显和取消
+  ver._editing = true;
+  ver._origStatus = ver.status;
+  ver._origNote = ver.note;
+  renderCurrentSeg(seg, verIdx);
+}
+
+// 取消修改(回到原结论)
+function cancelReviewEdit() {
+  const ver = segData[currentSeg].versions[currentVerIdx];
+  delete ver._editing;
+  delete ver._origStatus;
+  delete ver._origNote;
+  renderCurrentSeg(currentSeg, currentVerIdx);
+}
+
+// 提交审核(从待审核 → 已审核)
+let _undoTimer = null;
+function submitReview() {
+  const selected = document.querySelector('.review-opt.selected');
+  const noteEl = document.getElementById('review-note');
+  if (!selected) {
+    alert('请选择审核结论');
+    return;
+  }
+  if (!noteEl || !noteEl.value.trim()) {
+    alert('请填写备注原因');
+    return;
+  }
+  const type = selected.dataset.type;
+  const note = noteEl.value.trim();
+  const ver = segData[currentSeg].versions[currentVerIdx];
+  ver.status = type;
+  ver.conclusion = conclusionMap[type].text;
+  ver.note = note;
+  // 清理"修改结论"模式的标记
+  delete ver._editing;
+  delete ver._origStatus;
+  delete ver._origNote;
+
+  // 重渲染
+  renderCurrentSeg(currentSeg, currentVerIdx);
+
+  // 显示撤销 toast
+  document.getElementById('undo-conclusion').textContent = conclusionMap[type].text;
+  const toast = document.getElementById('undo-toast');
+  toast.classList.add('show');
+  const cd = document.getElementById('undo-countdown');
+  cd.style.animation = 'none';
+  cd.offsetHeight;
+  cd.style.animation = 'spin 3s linear forwards';
+  clearTimeout(_undoTimer);
+  _undoTimer = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
+function undoSubmit() {
+  clearTimeout(_undoTimer);
+  document.getElementById('undo-toast').classList.remove('show');
+  // 把当前段的当前版本改回 pending
+  const ver = segData[currentSeg].versions[currentVerIdx];
+  ver.status = 'pending';
+  delete ver.conclusion;
+  delete ver.note;
+  renderCurrentSeg(currentSeg, currentVerIdx);
+}
+
+// 重做/重试 Modal — 复用同一弹窗,按 mode 区分文案
+// mode: 'redo'(已审核段重做)| 'retry'(失败段重试)
+let _redoModalMode = 'redo';
+let _redoModalSeg = null;
+
+function openRedoModal(seg, mode = 'redo') {
+  _redoModalMode = mode;
+  _redoModalSeg = seg;
+  const data = segData[seg];
+  // 计算下一个版本号:已有版本数 + 1
+  const nextV = data.versions.length + 1;
+  // 找出当前 modal 应该回填的提示词:
+  // - redo 模式:用最新已审核版本的 prompt 作为基础
+  // - retry 模式:用当前失败版本的 prompt 作为基础
+  const basePrompt = data.versions[data.versions.length - 1].prompt;
+
+  // 历史版本号字符串(给 redo info 用)
+  const olderVerStr = data.versions.map(v => 'v' + v.v).join('/');
+
+  if (mode === 'redo') {
+    document.getElementById('redo-modal-title').textContent = `重做第 ${seg} 段(将生成 v${nextV})`;
+    document.getElementById('redo-modal-info').innerHTML = `重做将<strong>消耗 5 秒</strong>视频额度,生成的新版本会标记为 v${nextV},旧版本(${olderVerStr})仍保留可查看。`;
+    document.getElementById('redo-modal-reason-label').innerHTML = `本次重做原因<span class="text-3" style="font-weight:400; font-size:12px;">(可选)</span>`;
+    document.getElementById('redo-modal-submit-label').textContent = '提交重做';
+    document.getElementById('redo-reason').placeholder = '例如:画面镜头转得过快,要求更稳定一点';
+  } else {
+    // retry 模式
+    document.getElementById('redo-modal-title').textContent = `编辑提示词后重试第 ${seg} 段(将生成 v${nextV})`;
+    document.getElementById('redo-modal-info').innerHTML = `上次 v${nextV - 1} 调用失败,预占的 5s 额度已返还。<br>本次重试将<strong>重新预占 5 秒</strong>视频额度,失败返还,成功扣除。生成的新版本会标记为 v${nextV},旧版本(${olderVerStr})仍保留可查看。`;
+    document.getElementById('redo-modal-reason-label').innerHTML = `本次重试原因<span class="text-3" style="font-weight:400; font-size:12px;">(可选)</span>`;
+    document.getElementById('redo-modal-submit-label').textContent = '提交重试';
+    document.getElementById('redo-reason').placeholder = '例如:接口超时,改简化下提示词';
+  }
+
+  // 回填提示词
+  document.getElementById('redo-prompt').value = basePrompt;
+  // 清空原因
+  document.getElementById('redo-reason').value = '';
+
+  document.getElementById('redo-modal').style.display = 'flex';
+}
+
+function closeRedoModal() {
+  document.getElementById('redo-modal').style.display = 'none';
+}
+
+function confirmRedo() {
+  closeRedoModal();
+  const action = _redoModalMode === 'retry' ? '重试' : '重做';
+  alert(`已提交${action}(演示)。生产环境会:\n1. 调用视频生成模型生成新版本\n2. 视频生成完毕后,左侧该段显示"${action}中" → "vN 待审核"\n3. 中间区 ver-tabs 增加新版本选项`);
+}
+
+// 失败段:从中间区入口"编辑提示词后重试"按钮触发
+function openRetryModal(seg) {
+  openRedoModal(seg, 'retry');
+}
+
+// 失败段:快速直接重试(不改提示词)
+function confirmRetry(seg) {
+  if (!confirm('确认直接重试第 ' + seg + ' 段?\n将重新预占 5s 额度,失败返还,成功扣除。')) return;
+  alert('已提交重试(演示)。生产环境会立即调用视频生成模型,失败段进入"生成中"状态。');
+}
+
+// ============================================================
+// 商品图轮播 + Lightbox
+// ============================================================
+const productImgs = [
+  'linear-gradient(135deg,#f0d68a,#d4a045)',
+  'linear-gradient(135deg,#e8c270,#b8842a)',
+  'linear-gradient(135deg,#d4a45a,#a07028)',
+  'linear-gradient(135deg,#c89545,#8a6020)',
+  'linear-gradient(135deg,#b88535,#7a5018)'
+];
+let currentImgIdx = 0;
+
+function switchImg(idx) {
+  if (idx < 0 || idx >= productImgs.length) return;
+  currentImgIdx = idx;
+  const main = document.getElementById('carousel-main');
+  main.style.background = productImgs[idx];
+  document.getElementById('carousel-counter').textContent = (idx + 1) + ' / ' + productImgs.length;
+  document.querySelectorAll('.cn-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', i === idx);
+  });
+}
+
+
+function openLightbox() {
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lightbox-img').style.background = productImgs[currentImgIdx];
+  document.getElementById('lightbox-counter').textContent = (currentImgIdx + 1) + ' / ' + productImgs.length;
+  lb.classList.add('show');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('show');
+}
+function lightboxPrev() {
+  let idx = currentImgIdx - 1;
+  if (idx < 0) idx = productImgs.length - 1;
+  switchImg(idx);
+  document.getElementById('lightbox-img').style.background = productImgs[idx];
+  document.getElementById('lightbox-counter').textContent = (idx + 1) + ' / ' + productImgs.length;
+}
+function lightboxNext() {
+  let idx = currentImgIdx + 1;
+  if (idx >= productImgs.length) idx = 0;
+  switchImg(idx);
+  document.getElementById('lightbox-img').style.background = productImgs[idx];
+  document.getElementById('lightbox-counter').textContent = (idx + 1) + ' / ' + productImgs.length;
+}
+
+// Lightbox 键盘支持
+document.addEventListener('keydown', (e) => {
+  const lb = document.getElementById('lightbox');
+  if (!lb || !lb.classList.contains('show')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') lightboxPrev();
+  if (e.key === 'ArrowRight') lightboxNext();
+});
+
+// ============================================================
+// 已耗时实时滚动 — 每秒更新所有 .elapsed-timer 元素
+// ============================================================
+let _elapsedTickStart = Date.now();
+function tickElapsed() {
+  const offset = Math.floor((Date.now() - _elapsedTickStart) / 1000);
+  document.querySelectorAll('.elapsed-timer').forEach(el => {
+    const base = parseInt(el.dataset.base) || 0;
+    const fmt = el.dataset.fmt;
+    const total = base + offset;
+    el.textContent = fmt === 'short' ? formatElapsedShort(total) : formatElapsedLong(total);
+  });
+}
+setInterval(tickElapsed, 1000);
+
+// ============================================================
+// 初始化:渲染默认段 + 商品图初始化
+// ============================================================
+renderCurrentSeg(3);
+switchImg(0);
+
+// 点击外部关闭所有打开的下拉(用户菜单等基于 <details> 的)
+document.addEventListener('click', (e) => {
+  document.querySelectorAll('details[open]').forEach(d => {
+    if (!d.contains(e.target)) d.removeAttribute('open');
+  });
+});
+</script>
+</body>
+</html>

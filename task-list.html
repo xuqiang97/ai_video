@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>任务管理 - AI 商品视频系统</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<style>
+:root {
+  --bg: #F7F8FA;
+  --bg-elevated: #FFFFFF;
+  --bg-hover: #F2F3F5;
+  --bg-active: #E5E6EB;
+  --border: #E5E6EB;
+  --border-strong: #C9CDD4;
+  --text-1: #1D2129;
+  --text-2: #4E5969;
+  --text-3: #86909C;
+  --text-4: #C9CDD4;
+  --brand: #00B96B;
+  --brand-hover: #00A05E;
+  --brand-bg: #E8F8F0;
+  --info: #165DFF;     --info-bg: #E8F3FF;
+  --success: #00B42A;  --success-bg: #E8FFEA;
+  --warning: #FF7D00;  --warning-bg: #FFF7E8;
+  --danger: #F53F3F;   --danger-bg: #FFECE8;
+  --purple: #722ED1;   --purple-bg: #F5E8FF;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.08);
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 8px;
+  --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
+  --font-mono: "SF Mono", "Monaco", "Consolas", monospace;
+  --sidebar-w: 208px;
+  --topbar-h: 56px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-1);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; cursor: pointer; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input, select { font-family: inherit; font-size: inherit; }
+ul, ol { list-style: none; }
+
+.app {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  grid-template-rows: var(--topbar-h) 1fr;
+  grid-template-areas: "topbar topbar" "sidebar main";
+  min-height: 100vh;
+}
+.topbar {
+  grid-area: topbar;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.topbar .logo {
+  display: flex; align-items: center; gap: 8px;
+  font-weight: 600; font-size: 15px; color: var(--text-1);
+}
+.topbar .logo-mark {
+  width: 28px; height: 28px;
+  background: linear-gradient(135deg, var(--brand) 0%, #00D982 100%);
+  border-radius: var(--radius);
+  display: grid; place-items: center;
+  color: white; font-weight: 700; font-size: 14px;
+}
+.topbar .spacer { flex: 1; }
+.topbar .user {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--text-2);
+  padding: 4px 8px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.topbar .user::-webkit-details-marker { display: none; }
+.topbar .user:hover { background: var(--bg-hover); }
+.topbar .avatar {
+  width: 28px; height: 28px;
+  background: var(--brand-bg);
+  color: var(--brand);
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-weight: 600; font-size: 12px;
+}
+
+/* 用户下拉菜单 */
+.user-menu {
+  position: relative;
+  display: inline-block;
+}
+.user-menu-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 200px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  z-index: 100;
+  padding: 4px;
+  overflow: hidden;
+}
+.user-menu-info {
+  padding: 10px 12px;
+}
+.user-menu-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-1);
+  margin-bottom: 2px;
+}
+.user-menu-account {
+  font-size: 12px;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+}
+.user-menu-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0 -4px;
+}
+.user-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  font-size: 13px;
+  color: var(--text-1);
+  border-radius: var(--radius);
+  cursor: pointer;
+  margin: 4px 0;
+  transition: background 0.15s;
+}
+.user-menu-item:hover {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+.user-menu-item .ti {
+  font-size: 16px;
+}
+
+.quota-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 4px 12px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+}
+.quota-chip:hover { border-color: var(--brand); }
+.quota-chip .quota-label { color: var(--text-3); font-size: 12px; }
+.quota-chip .quota-value { color: var(--text-1); font-weight: 600; font-family: var(--font-mono); }
+.quota-chip .quota-tag {
+  background: var(--bg-elevated);
+  color: var(--text-2);
+  font-size: 11px;
+  padding: 0 6px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+}
+.quota-chip .refresh-btn {
+  display: grid; place-items: center;
+  width: 22px; height: 22px;
+  color: var(--text-3);
+  border-radius: 50%;
+  margin-left: 2px;
+}
+
+.sidebar {
+  grid-area: sidebar;
+  background: var(--bg-elevated);
+  border-right: 1px solid var(--border);
+  padding: 12px 8px;
+}
+.nav-group-title {
+  font-size: 12px;
+  color: var(--text-3);
+  padding: 12px 12px 6px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  color: var(--text-2);
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 2px;
+  transition: background 0.15s;
+}
+.nav-item:hover { background: var(--bg-hover); color: var(--text-1); }
+.nav-item.active {
+  background: var(--brand-bg);
+  color: var(--brand);
+  font-weight: 500;
+}
+.nav-item .ti { font-size: 18px; }
+
+.main {
+  grid-area: main;
+  padding: 20px 24px 24px;
+}
+
+.page-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.page-header .page-title {
+  font-size: 20px; font-weight: 600; color: var(--text-1);
+}
+.page-header .page-subtitle {
+  font-size: 13px; color: var(--text-3); margin-top: 2px;
+}
+
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  height: 32px;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.btn .ti { font-size: 16px; }
+.btn-primary { background: var(--brand); color: white; }
+.btn-primary:hover { background: var(--brand-hover); }
+.btn-default {
+  background: var(--bg-elevated);
+  border-color: var(--border);
+  color: var(--text-1);
+}
+.btn-default:hover { border-color: var(--brand); color: var(--brand); }
+.btn-text {
+  color: var(--brand);
+  padding: 4px 8px;
+  height: 28px;
+}
+.btn-text:hover { background: var(--brand-bg); }
+.btn-text-default {
+  color: var(--text-2);
+  padding: 4px 8px;
+  height: 28px;
+}
+.btn-text-default:hover { background: var(--bg-hover); color: var(--text-1); }
+.btn-sm { height: 28px; padding: 4px 10px; font-size: 13px; }
+.btn-lg { height: 36px; padding: 8px 18px; }
+
+/* ========== 筛选区 ========== */
+.filter-bar {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  margin-bottom: 12px;
+}
+.quick-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px dashed var(--border);
+  flex-wrap: wrap;
+}
+.quick-filter-label {
+  font-size: 13px;
+  color: var(--text-3);
+  flex-shrink: 0;
+}
+.quick-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+.quick-chip .ti { font-size: 14px; }
+.quick-chip:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+.quick-chip.active {
+  background: var(--brand-bg);
+  color: var(--brand);
+  border-color: var(--brand);
+  font-weight: 500;
+}
+/* 生成中 chip(进度类,紫色) */
+.quick-chip.chip-progress:hover {
+  border-color: var(--purple);
+  color: var(--purple);
+}
+.quick-chip.chip-progress.active {
+  background: var(--purple-bg);
+  color: var(--purple);
+  border-color: var(--purple);
+}
+.quick-chip.chip-progress .ti-loader-2 {
+  animation: spin 2s linear infinite;
+}
+.quick-chip.chip-progress.active .chip-count {
+  background: var(--purple);
+  color: white;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* chip 多行 tooltip(覆盖通用 [data-tip],用 [data-tooltip] 单独命名空间) */
+.quick-chip[data-tooltip]:hover::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text-1);
+  color: white;
+  font-size: 12px;
+  line-height: 1.6;
+  padding: 8px 12px;
+  border-radius: 6px;
+  white-space: pre-line;
+  z-index: 100;
+  font-weight: 400;
+  pointer-events: none;
+  min-width: 180px;
+  max-width: 320px;
+  text-align: left;
+  box-shadow: var(--shadow-md);
+}
+.quick-chip[data-tooltip]:hover::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--text-1);
+  z-index: 100;
+  pointer-events: none;
+}
+.quick-chip {
+  position: relative;
+}
+.quick-chip .chip-count {
+  background: var(--bg-active);
+  color: var(--text-3);
+  font-size: 11px;
+  padding: 0 6px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+.quick-chip.active .chip-count {
+  background: var(--brand);
+  color: white;
+}
+.quick-filter-tip {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-left: auto;
+}
+.quick-filter-tip .ti { font-size: 12px; vertical-align: -1px; }
+
+.filter-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.filter-input {
+  height: 30px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 13px;
+  background: var(--bg-elevated);
+  color: var(--text-1);
+  outline: none;
+  min-width: 160px;
+}
+.filter-input:focus { border-color: var(--brand); }
+.filter-input::placeholder { color: var(--text-4); }
+
+/* 时间筛选器(details + 浮层) */
+.time-filter {
+  position: relative;
+  display: inline-block;
+}
+.time-filter > summary {
+  list-style: none;
+}
+.time-filter > summary::-webkit-details-marker { display: none; }
+.time-filter-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 50;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 16px;
+  min-width: 360px;
+}
+.time-filter-section {
+  margin-bottom: 16px;
+}
+.time-filter-section:last-of-type {
+  margin-bottom: 0;
+}
+.time-filter-label {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-bottom: 10px;
+}
+.time-tab-group {
+  display: flex;
+  gap: 0;
+  background: var(--bg-hover);
+  padding: 3px;
+  border-radius: var(--radius);
+}
+.time-tab {
+  flex: 1;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  transition: all 0.15s;
+}
+.time-tab:hover { color: var(--text-1); }
+.time-tab.active {
+  background: var(--bg-elevated);
+  color: var(--brand);
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
+}
+.time-preset-group {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.time-preset {
+  padding: 8px 14px;
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+  border-radius: var(--radius);
+  text-align: center;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  transition: all 0.15s;
+}
+.time-preset:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+.time-preset.active {
+  background: var(--brand-bg);
+  color: var(--brand);
+  border-color: var(--brand);
+  font-weight: 500;
+}
+.time-filter-custom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ========== 任务行卡 ========== */
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.task-row {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px 18px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+  transition: all 0.15s;
+}
+.task-row:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-sm);
+}
+.task-row.has-todo {
+  border-left: 3px solid var(--brand);
+  padding-left: 16px;
+}
+
+.task-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.task-info-row1 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.task-id {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+.task-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--text-3);
+  flex-wrap: wrap;
+}
+.task-meta-sep::before {
+  content: '·';
+  margin-right: 12px;
+  color: var(--text-4);
+}
+.task-meta .asin { color: var(--text-2); font-family: var(--font-mono); }
+
+/* 段状态行 */
+.seg-status-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+.seg-dots {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.seg-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  display: grid;
+  place-items: center;
+  cursor: help;
+  position: relative;
+  transition: transform 0.1s;
+}
+.seg-dot:hover { transform: scale(1.15); z-index: 1; }
+
+/* 状态颜色 */
+.seg-dot.satisfied { background: var(--success); }
+.seg-dot.usable { background: var(--info); }
+.seg-dot.unusable { background: var(--danger); }
+.seg-dot.pending {
+  background: var(--bg-elevated);
+  border: 1.5px solid var(--border-strong);
+}
+.seg-dot.regenerating {
+  background: var(--purple-bg);
+  border: 1.5px solid var(--purple);
+}
+.seg-dot.regenerating::after {
+  content: '';
+  width: 8px; height: 8px;
+  border: 1.5px solid var(--purple);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: dot-spin 0.8s linear infinite;
+}
+@keyframes dot-spin { to { transform: rotate(360deg); } }
+.seg-dot.failed {
+  background: var(--danger-bg);
+  border: 1.5px solid var(--danger);
+}
+.seg-dot.failed::after {
+  content: '!';
+  color: var(--danger);
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+/* 段索引(段号上方/下方小数字) */
+.seg-dot .seg-idx {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  color: var(--text-4);
+  font-family: var(--font-mono);
+}
+
+/* 状态摘要 */
+
+/* 操作区 */
+.task-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.task-time {
+  font-size: 12px;
+  color: var(--text-3);
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.task-time .time-item {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  justify-content: flex-end;
+}
+.task-time .time-label {
+  color: var(--text-3);
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.task-time .time-abs {
+  color: var(--text-1);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+}
+.task-time .time-created .time-abs {
+  color: var(--text-3);
+  font-weight: 400;
+}
+
+
+
+/* tooltip */
+[data-tip] {
+  position: relative;
+}
+[data-tip]:hover::before {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text-1);
+  color: white;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 100;
+  font-family: var(--font);
+  pointer-events: none;
+  font-weight: 400;
+}
+[data-tip]:hover::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: var(--text-1);
+  z-index: 100;
+  pointer-events: none;
+}
+
+/* 分页 */
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px 4px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.pagination-total {
+  margin-right: auto;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.pagination-pagesize {
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+  color: var(--text-1);
+  font-size: 13px;
+  cursor: pointer;
+  outline: none;
+}
+.pagination-pagesize:hover { border-color: var(--brand); }
+.pagination-jump {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.pagination-jump-input {
+  width: 48px;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 13px;
+  text-align: center;
+  outline: none;
+  font-family: var(--font-mono);
+}
+.pagination-jump-input:focus { border-color: var(--brand); }
+.pagination .page-btn {
+  height: 28px; min-width: 28px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+  color: var(--text-2);
+  display: inline-grid;
+  place-items: center;
+}
+.pagination .page-btn:hover { border-color: var(--brand); color: var(--brand); }
+.pagination .page-btn.active { background: var(--brand); color: white; border-color: var(--brand); }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+::-webkit-scrollbar-track { background: transparent; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <a class="logo" href="task-list.html"><div class="logo-mark">AI</div><span>AI 商品视频系统</span></a>
+    <div class="spacer"></div>
+    <div class="quota-chip" title="点击刷新">
+      <span class="quota-label">今日额度</span>
+      <span class="quota-value">120 / 600s</span>
+      <span class="quota-tag">Seedance 2.0</span>
+      <span class="refresh-btn"><i class="ti ti-refresh" style="font-size:14px;"></i></span>
+    </div>
+    <details class="user-menu" style="margin-left:8px;">
+      <summary class="user"><div class="avatar">王</div><span>王运营</span><i class="ti ti-chevron-down" style="font-size:14px;"></i></summary>
+      <div class="user-menu-panel">
+        <div class="user-menu-info">
+          <div class="user-menu-name">王运营</div>
+          <div class="user-menu-account">wang.yunying</div>
+        </div>
+        <div class="user-menu-divider"></div>
+        <a class="user-menu-item" href="login.html"><i class="ti ti-logout"></i><span>退出登录</span></a>
+      </div>
+    </details>
+  </header>
+
+  <aside class="sidebar">
+    <div class="nav-group-title">主链路</div>
+    <a class="nav-item active" href="task-list.html"><i class="ti ti-list-check"></i><span>任务管理</span></a>
+    <a class="nav-item" href="task-create.html"><i class="ti ti-plus"></i><span>新建生成任务</span></a>
+    <div class="nav-group-title">后期工程</div>
+    <a class="nav-item"><i class="ti ti-movie"></i><span>长视频合成</span></a>
+    <a class="nav-item" style="opacity:0.5; cursor:not-allowed;"><i class="ti ti-typography"></i><span>字幕处理</span><span style="margin-left:auto; font-size:10px; background:var(--bg-active); padding:0 5px; border-radius:2px;">规划中</span></a>
+    <a class="nav-item" style="opacity:0.5; cursor:not-allowed;"><i class="ti ti-music"></i><span>音频处理</span><span style="margin-left:auto; font-size:10px; background:var(--bg-active); padding:0 5px; border-radius:2px;">规划中</span></a>
+  </aside>
+
+  <main class="main">
+
+    <div class="page-header">
+      <div>
+        <div class="page-title">任务管理</div>
+      </div>
+      <div>
+        <a class="btn btn-primary btn-lg" href="task-create.html"><i class="ti ti-plus"></i>新建生成任务</a>
+      </div>
+    </div>
+
+    <!-- 筛选区 -->
+    <div class="filter-bar">
+
+      <!-- 快速筛选 chip(按业务关注分类) -->
+      <div class="quick-filter-row">
+        <span class="quick-filter-label">快速筛选:</span>
+        <div class="quick-chip chip-progress" onclick="toggleQuickChip(this)" data-tooltip="生成中&#10;存在有 1 段还在生成视频中,&#10;长时间卡在生成中可联系管理员排查">
+          <i class="ti ti-loader-2"></i>
+          生成中
+          <span class="chip-count">2</span>
+        </div>
+        <div class="quick-chip" onclick="toggleQuickChip(this)" data-tooltip="需要审核&#10;存在有 1 段视频已生成完毕,&#10;等你打满意/可用/不可用三档结论">
+          <i class="ti ti-eye"></i>
+          需要审核
+          <span class="chip-count">8</span>
+        </div>
+        <div class="quick-chip" onclick="toggleQuickChip(this)" data-tooltip="需要处理&#10;存在有失败段(额度返还可重试)或不可用段(可重做),&#10;等你处理">
+          <i class="ti ti-alert-circle"></i>
+          需要处理
+          <span class="chip-count">5</span>
+        </div>
+        <span class="quick-filter-tip">
+          <i class="ti ti-info-circle"></i> 鼠标悬停查看含义,可多选叠加,点击立即生效
+        </span>
+      </div>
+
+      <div class="filter-row">
+        <input class="filter-input" placeholder="店铺(全部)" style="min-width:180px;">
+        <input class="filter-input" placeholder="🔍 TaskID 或 ASIN 搜索" style="min-width:240px;">
+        <select class="filter-input" style="min-width:160px;">
+          <option>视频时长(全部)</option>
+          <option>5s(1 段)</option><option>10s(2 段)</option><option>15s(3 段)</option>
+          <option>20s(4 段)</option><option>25s(5 段)</option><option>30s(6 段)</option>
+          <option>35s(7 段)</option><option>40s(8 段)</option><option>45s(9 段)</option>
+          <option>50s(10 段)</option><option>55s(11 段)</option><option>60s(12 段)</option>
+        </select>
+        <select class="filter-input" style="min-width:160px;">
+          <option>视频生成模型(全部)</option>
+          <option>Seedance 2.0</option>
+          <option>HappyHorse 1.0</option>
+        </select>
+
+        <!-- 时间筛选器(占位,演示用 details 模拟下拉) -->
+        <details class="time-filter" id="time-filter">
+          <summary class="filter-input" style="min-width:240px; cursor:pointer; display:inline-flex; align-items:center; justify-content:space-between; gap:8px;">
+            <span><i class="ti ti-calendar" style="font-size:14px; vertical-align:-2px;"></i> <span style="color:var(--text-3);">时间</span> <span class="font-medium" id="tf-summary-field">创建</span> <span class="font-medium" id="tf-summary-range">最近 30 天</span></span>
+            <i class="ti ti-chevron-down" style="font-size:14px; color:var(--text-3);"></i>
+          </summary>
+          <div class="time-filter-panel">
+            <div class="time-filter-section">
+              <div class="time-filter-label">时间维度</div>
+              <div class="time-tab-group">
+                <div class="time-tab active" data-field="created">创建时间</div>
+                <div class="time-tab" data-field="updated">更新时间</div>
+              </div>
+            </div>
+            <div class="time-filter-section">
+              <div class="time-filter-label">快捷选项</div>
+              <div class="time-preset-group">
+                <div class="time-preset" data-preset="7d">最近 7 天</div>
+                <div class="time-preset active" data-preset="30d">最近 30 天</div>
+                <div class="time-preset" data-preset="week">本周</div>
+                <div class="time-preset" data-preset="month">本月</div>
+              </div>
+            </div>
+            <div class="time-filter-section">
+              <div class="time-filter-label">自定义范围</div>
+              <div class="time-filter-custom">
+                <input type="date" class="filter-input tf-date-input" id="tf-date-start" style="flex:1;">
+                <span style="color:var(--text-3);">→</span>
+                <input type="date" class="filter-input tf-date-input" id="tf-date-end" style="flex:1;">
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <button class="btn btn-primary btn-sm"><i class="ti ti-search"></i>查询</button>
+        <button class="btn btn-default btn-sm"><i class="ti ti-refresh"></i>重置</button>
+        <div style="flex:1;"></div>
+        <span class="text-3" style="font-size:12px; color:var(--text-3);"><i class="ti ti-info-circle"></i> 共 23 个任务(近 30 天),按更新时间倒序</span>
+      </div>
+
+    </div>
+
+    <!-- 任务列表 -->
+    <div class="task-list">
+
+      <!-- ROW 1:全部待审核(刚生成完) -->
+      <div class="task-row has-todo">
+        <div class="task-info">
+          <div class="task-info-row1">
+            <span class="task-id">T20260425_000012</span>
+          </div>
+          <div class="task-meta">
+            <span>Amazon-Z01097-US</span>
+            <span class="task-meta-sep asin">B09KMHKJ8X</span>
+            <span class="task-meta-sep">30s · 6 段</span>
+            <span class="task-meta-sep">GPT-5.4 · 激进版</span>
+            <span class="task-meta-sep">Seedance 2.0</span>
+          </div>
+          <div class="seg-status-row">
+            <div class="seg-dots">
+              <span class="seg-dot pending" data-tip="第 1 段 · 0–5s · v1 待审核(当前)"></span>
+              <span class="seg-dot pending" data-tip="第 2 段 · 5–10s · v1 待审核(当前)"></span>
+              <span class="seg-dot pending" data-tip="第 3 段 · 10–15s · v1 待审核(当前)"></span>
+              <span class="seg-dot pending" data-tip="第 4 段 · 15–20s · v1 待审核(当前)"></span>
+              <span class="seg-dot pending" data-tip="第 5 段 · 20–25s · v1 待审核(当前)"></span>
+              <span class="seg-dot pending" data-tip="第 6 段 · 25–30s · v1 待审核(当前)"></span>
+            </div>
+          </div>
+        </div>
+        <div class="task-actions">
+          <div class="task-time">
+            <div class="time-item">
+              <span class="time-label">更新</span>
+              <span class="time-abs">2026-04-25 15:08:42</span>
+            </div>
+            <div class="time-item time-created">
+              <span class="time-label">创建</span>
+              <span class="time-abs">2026-04-25 15:06:18</span>
+            </div>
+          </div>
+          <a class="btn btn-primary btn-sm" href="task-detail.html" target="_blank">审核</a>
+        </div>
+      </div>
+
+      <!-- ROW 2:部分审核完 + 重做中 + 失败(最复杂) -->
+      <div class="task-row has-todo">
+        <div class="task-info">
+          <div class="task-info-row1">
+            <span class="task-id">T20260425_000007</span>
+          </div>
+          <div class="task-meta">
+            <span>Amazon-Z01097-US</span>
+            <span class="task-meta-sep asin">B08DNRKJX7</span>
+            <span class="task-meta-sep">30s · 6 段</span>
+            <span class="task-meta-sep">GPT-5.4 · 激进版</span>
+            <span class="task-meta-sep">Seedance 2.0</span>
+          </div>
+          <div class="seg-status-row">
+            <div class="seg-dots">
+              <span class="seg-dot satisfied" data-tip="第 1 段 · 0–5s · v1 满意(当前)"></span>
+              <span class="seg-dot usable" data-tip="第 2 段 · 5–10s · v1 可用(当前)"></span>
+              <span class="seg-dot regenerating" data-tip="第 3 段 · 10–15s · v3 重做中(当前) · 历史:v2 不可用,v1 不可用"></span>
+              <span class="seg-dot pending" data-tip="第 4 段 · 15–20s · v1 待审核(当前)"></span>
+              <span class="seg-dot regenerating" data-tip="第 5 段 · 20–25s · v2 重做中(当前) · 历史:v1 不可用"></span>
+              <span class="seg-dot failed" data-tip="第 6 段 · 25–30s · v1 失败(当前) · 额度返还可重试"></span>
+            </div>
+          </div>
+        </div>
+        <div class="task-actions">
+          <div class="task-time">
+            <div class="time-item">
+              <span class="time-label">更新</span>
+              <span class="time-abs">2026-04-25 15:06:55</span>
+            </div>
+            <div class="time-item time-created">
+              <span class="time-label">创建</span>
+              <span class="time-abs">2026-04-25 14:35:21</span>
+            </div>
+          </div>
+          <a class="btn btn-primary btn-sm" href="task-detail.html" target="_blank">审核</a>
+        </div>
+      </div>
+
+      <!-- ROW 3:仅 1 段失败,其他都审核完 - 不算待办(业务只能查看决定重试) -->
+      <div class="task-row">
+        <div class="task-info">
+          <div class="task-info-row1">
+            <span class="task-id">T20260425_000005</span>
+          </div>
+          <div class="task-meta">
+            <span>Amazon-Z01112-US</span>
+            <span class="task-meta-sep asin">B07GHRP2M9</span>
+            <span class="task-meta-sep">15s · 3 段</span>
+            <span class="task-meta-sep">GPT-5.4 · 平衡版</span>
+            <span class="task-meta-sep">Seedance 2.0</span>
+          </div>
+          <div class="seg-status-row">
+            <div class="seg-dots">
+              <span class="seg-dot satisfied" data-tip="第 1 段 · 0–5s · v1 满意(当前)"></span>
+              <span class="seg-dot satisfied" data-tip="第 2 段 · 5–10s · v1 满意(当前)"></span>
+              <span class="seg-dot failed" data-tip="第 3 段 · 10–15s · v1 失败(当前) · 额度返还可重试"></span>
+            </div>
+          </div>
+        </div>
+        <div class="task-actions">
+          <div class="task-time">
+            <div class="time-item">
+              <span class="time-label">更新</span>
+              <span class="time-abs">2026-04-25 14:53:12</span>
+            </div>
+            <div class="time-item time-created">
+              <span class="time-label">创建</span>
+              <span class="time-abs">2026-04-25 14:02:37</span>
+            </div>
+          </div>
+          <a class="btn btn-default btn-sm" href="task-detail.html" target="_blank">查看</a>
+        </div>
+      </div>
+
+      <!-- ROW 4:60s 长视频,中间审核 -->
+      <div class="task-row has-todo">
+        <div class="task-info">
+          <div class="task-info-row1">
+            <span class="task-id">T20260425_000003</span>
+          </div>
+          <div class="task-meta">
+            <span>Amazon-Z01097-US</span>
+            <span class="task-meta-sep asin">B0BLT5QXVK</span>
+            <span class="task-meta-sep">60s · 12 段</span>
+            <span class="task-meta-sep">Seed 2.0 · 激进版</span>
+            <span class="task-meta-sep">Seedance 2.0</span>
+          </div>
+          <div class="seg-status-row">
+            <div class="seg-dots">
+              <span class="seg-dot satisfied" data-tip="第 1 段 · 0–5s · v1 满意(当前)"></span>
+              <span class="seg-dot satisfied" data-tip="第 2 段 · 5–10s · v1 满意(当前)"></span>
+              <span class="seg-dot usable" data-tip="第 3 段 · 10–15s · v1 可用(当前)"></span>
+              <span class="seg-dot satisfied" data-tip="第 4 段 · 15–20s · v1 满意(当前)"></span>
+              <span class="seg-dot usable" data-tip="第 5 段 · 20–25s · v1 可用(当前)"></span>
+              <span class="seg-dot unusable" data-tip="第 6 段 · 25–30s · v1 不可用(当前)"></span>
+              <span class="seg-dot satisfied" data-tip="第 7 段 · 30–35s · v1 满意(当前)"></span>
+              <span class="seg-dot satisfied" data-tip="第 8 段 · 35–40s · v1 满意(当前)"></span>
+              <span class="seg-dot pending" data-tip="第 9 段 · 40–45s · v1 待审核(当前)"></span>
+              <span class="seg-dot pending" data-tip="第 10 段 · 45–50s · v1 待审核(当前)"></span>
+              <span class="seg-dot pending" data-tip="第 11 段 · 50–55s · v1 待审核(当前)"></span>
+              <span class="seg-dot pending" data-tip="第 12 段 · 55–60s · v1 待审核(当前)"></span>
+            </div>
+          </div>
+        </div>
+        <div class="task-actions">
+          <div class="task-time">
+            <div class="time-item">
+              <span class="time-label">更新</span>
+              <span class="time-abs">2026-04-25 14:09:03</span>
+            </div>
+            <div class="time-item time-created">
+              <span class="time-label">创建</span>
+              <span class="time-abs">2026-04-25 13:20:55</span>
+            </div>
+          </div>
+          <a class="btn btn-primary btn-sm" href="task-detail.html" target="_blank">审核</a>
+        </div>
+      </div>
+
+      <!-- ROW 5:刚提交,全部生成中(任务初始态) -->
+      <div class="task-row has-todo">
+        <div class="task-info">
+          <div class="task-info-row1">
+            <span class="task-id">T20260425_000011</span>
+          </div>
+          <div class="task-meta">
+            <span>Amazon-Z01097-US</span>
+            <span class="task-meta-sep asin">B0CFXYZ123</span>
+            <span class="task-meta-sep">30s · 6 段</span>
+            <span class="task-meta-sep">GPT-5.4 · 保守版</span>
+            <span class="task-meta-sep">Seedance 2.0</span>
+          </div>
+          <div class="seg-status-row">
+            <div class="seg-dots">
+              <span class="seg-dot regenerating" data-tip="第 1 段 · 0–5s · v1 生成中(当前)"></span>
+              <span class="seg-dot regenerating" data-tip="第 2 段 · 5–10s · v1 生成中(当前)"></span>
+              <span class="seg-dot regenerating" data-tip="第 3 段 · 10–15s · v1 生成中(当前)"></span>
+              <span class="seg-dot regenerating" data-tip="第 4 段 · 15–20s · v1 生成中(当前)"></span>
+              <span class="seg-dot regenerating" data-tip="第 5 段 · 20–25s · v1 生成中(当前)"></span>
+              <span class="seg-dot regenerating" data-tip="第 6 段 · 25–30s · v1 生成中(当前)"></span>
+            </div>
+          </div>
+        </div>
+        <div class="task-actions">
+          <div class="task-time">
+            <div class="time-item">
+              <span class="time-label">更新</span>
+              <span class="time-abs">2026-04-25 15:03:48</span>
+            </div>
+            <div class="time-item time-created">
+              <span class="time-label">创建</span>
+              <span class="time-abs">2026-04-25 15:03:11</span>
+            </div>
+          </div>
+          <a class="btn btn-default btn-sm" href="task-detail.html" target="_blank">查看</a>
+        </div>
+      </div>
+
+      <!-- ROW 6:全部满意/可用 已完成(灰色弱化) -->
+      <div class="task-row done">
+        <div class="task-info">
+          <div class="task-info-row1">
+            <span class="task-id">T20260425_000002</span>
+          </div>
+          <div class="task-meta">
+            <span>Amazon-Z01097-US</span>
+            <span class="task-meta-sep asin">B07Q4LR8JM</span>
+            <span class="task-meta-sep">30s · 6 段</span>
+            <span class="task-meta-sep">GPT-5.4 · 激进版</span>
+            <span class="task-meta-sep">Seedance 2.0</span>
+          </div>
+          <div class="seg-status-row">
+            <div class="seg-dots">
+              <span class="seg-dot satisfied" data-tip="第 1 段 · 0–5s · v1 满意(当前)"></span>
+              <span class="seg-dot satisfied" data-tip="第 2 段 · 5–10s · v1 满意(当前)"></span>
+              <span class="seg-dot usable" data-tip="第 3 段 · 10–15s · v1 可用(当前)"></span>
+              <span class="seg-dot satisfied" data-tip="第 4 段 · 15–20s · v1 满意(当前)"></span>
+              <span class="seg-dot usable" data-tip="第 5 段 · 20–25s · v1 可用(当前) (v2)"></span>
+              <span class="seg-dot satisfied" data-tip="第 6 段 · 25–30s · v1 满意(当前)"></span>
+            </div>
+          </div>
+        </div>
+        <div class="task-actions">
+          <div class="task-time">
+            <div class="time-item">
+              <span class="time-label">更新</span>
+              <span class="time-abs">2026-04-24 17:42:09</span>
+            </div>
+            <div class="time-item time-created">
+              <span class="time-label">创建</span>
+              <span class="time-abs">2026-04-24 17:15:32</span>
+            </div>
+          </div>
+          <a class="btn btn-default btn-sm" href="task-detail.html" target="_blank">查看</a>
+        </div>
+      </div>
+
+      <!-- ROW 7:已完成 + 5s 短视频 -->
+      <div class="task-row done">
+        <div class="task-info">
+          <div class="task-info-row1">
+            <span class="task-id">T20260424_000089</span>
+          </div>
+          <div class="task-meta">
+            <span>Amazon-Z01112-US</span>
+            <span class="task-meta-sep asin">B0DXX12AB3</span>
+            <span class="task-meta-sep">5s · 1 段</span>
+            <span class="task-meta-sep">GPT-5.4 · 平衡版</span>
+            <span class="task-meta-sep">Seedance 2.0</span>
+          </div>
+          <div class="seg-status-row">
+            <div class="seg-dots">
+              <span class="seg-dot satisfied" data-tip="第 1 段 · 0–5s · v1 满意(当前)"></span>
+            </div>
+          </div>
+        </div>
+        <div class="task-actions">
+          <div class="task-time">
+            <div class="time-item">
+              <span class="time-label">更新</span>
+              <span class="time-abs">2026-04-24 11:15:58</span>
+            </div>
+            <div class="time-item time-created">
+              <span class="time-label">创建</span>
+              <span class="time-abs">2026-04-24 11:08:24</span>
+            </div>
+          </div>
+          <a class="btn btn-default btn-sm" href="task-detail.html" target="_blank">查看</a>
+        </div>
+      </div>
+
+      <!-- ROW 8:含不可用没重做(部分完成) -->
+      <div class="task-row done">
+        <div class="task-info">
+          <div class="task-info-row1">
+            <span class="task-id">T20260424_000076</span>
+          </div>
+          <div class="task-meta">
+            <span>Amazon-Z01097-US</span>
+            <span class="task-meta-sep asin">B0EZQ5KX8L</span>
+            <span class="task-meta-sep">30s · 6 段</span>
+            <span class="task-meta-sep">Seed 2.0 · 保守版</span>
+            <span class="task-meta-sep">Seedance 2.0</span>
+          </div>
+          <div class="seg-status-row">
+            <div class="seg-dots">
+              <span class="seg-dot satisfied" data-tip="第 1 段 · 0–5s · v1 满意(当前)"></span>
+              <span class="seg-dot usable" data-tip="第 2 段 · 5–10s · v1 可用(当前)"></span>
+              <span class="seg-dot unusable" data-tip="第 3 段 · 10–15s · v1 不可用(当前)(未重做)"></span>
+              <span class="seg-dot satisfied" data-tip="第 4 段 · 15–20s · v1 满意(当前)"></span>
+              <span class="seg-dot satisfied" data-tip="第 5 段 · 20–25s · v1 满意(当前)"></span>
+              <span class="seg-dot unusable" data-tip="第 6 段 · 25–30s · v1 不可用(当前)(未重做)"></span>
+            </div>
+          </div>
+        </div>
+        <div class="task-actions">
+          <div class="task-time">
+            <div class="time-item">
+              <span class="time-label">更新</span>
+              <span class="time-abs">2026-04-24 09:30:41</span>
+            </div>
+            <div class="time-item time-created">
+              <span class="time-label">创建</span>
+              <span class="time-abs">2026-04-24 09:08:12</span>
+            </div>
+          </div>
+          <a class="btn btn-default btn-sm" href="task-detail.html" target="_blank">查看</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 分页 -->
+    <div class="pagination">
+      <span class="pagination-total">共 23 条</span>
+      <div style="flex:1;"></div>
+      <select class="pagination-pagesize">
+        <option>10 条/页</option>
+        <option selected>20 条/页</option>
+        <option>50 条/页</option>
+      </select>
+      <button class="page-btn" disabled style="opacity:0.4;"><i class="ti ti-chevron-left" style="font-size:14px;"></i></button>
+      <button class="page-btn active">1</button>
+      <button class="page-btn">2</button>
+      <button class="page-btn"><i class="ti ti-chevron-right" style="font-size:14px;"></i></button>
+      <span class="pagination-jump">
+        跳至 <input type="number" min="1" max="2" value="1" class="pagination-jump-input"> 页
+      </span>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// 列表页一期不做复杂交互,纯展示。
+// 生产代码需要:
+//   - 分页:GET /api/tasks?page=N&size=N
+//   - 搜索:GET /api/tasks?q=keyword
+//   - 筛选:GET /api/tasks?shop=...&duration=...&videoModel=...&timeField=...&timeFrom=...&timeTo=...
+//   - 默认排序:updated_at DESC
+
+// ========== 时间筛选器交互 ==========
+const presetLabels = {
+  '7d': '最近 7 天',
+  '30d': '最近 30 天',
+  'week': '本周',
+  'month': '本月'
+};
+
+function updateSummary() {
+  // 当前选中的时间维度
+  const activeTab = document.querySelector('.time-tab.active');
+  const fieldText = activeTab ? activeTab.dataset.field === 'created' ? '创建' : '更新' : '创建';
+  document.getElementById('tf-summary-field').textContent = fieldText;
+
+  // 当前选中的范围
+  const activePreset = document.querySelector('.time-preset.active');
+  const start = document.getElementById('tf-date-start').value;
+  const end = document.getElementById('tf-date-end').value;
+  let rangeText;
+  if (activePreset) {
+    rangeText = presetLabels[activePreset.dataset.preset];
+  } else if (start && end) {
+    rangeText = start + ' → ' + end;
+  } else if (start) {
+    rangeText = start + ' → 今天';
+  } else if (end) {
+    rangeText = '至今 → ' + end;
+  } else {
+    rangeText = '请选择';
+  }
+  document.getElementById('tf-summary-range').textContent = rangeText;
+}
+
+// Tab 切换(创建时间 / 更新时间)
+document.querySelectorAll('.time-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.time-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    updateSummary();
+  });
+});
+
+// 快捷选项点击
+document.querySelectorAll('.time-preset').forEach(preset => {
+  preset.addEventListener('click', () => {
+    document.querySelectorAll('.time-preset').forEach(p => p.classList.remove('active'));
+    preset.classList.add('active');
+    // 清空自定义日期(互斥)
+    document.getElementById('tf-date-start').value = '';
+    document.getElementById('tf-date-end').value = '';
+    updateSummary();
+  });
+});
+
+// 自定义日期输入(互斥:清空快捷选项)
+document.querySelectorAll('.tf-date-input').forEach(input => {
+  input.addEventListener('change', () => {
+    document.querySelectorAll('.time-preset').forEach(p => p.classList.remove('active'));
+    updateSummary();
+  });
+});
+
+// 点击外部关闭所有打开的下拉(时间筛选器、用户菜单等基于 <details> 的)
+document.addEventListener('click', (e) => {
+  document.querySelectorAll('details[open]').forEach(d => {
+    if (!d.contains(e.target)) d.removeAttribute('open');
+  });
+});
+
+// 快速筛选 chip 切换(可多选)
+function toggleQuickChip(el) {
+  el.classList.toggle('active');
+  // 生产代码:此处需重新查询列表(把激活的 chip 作为筛选参数)
+  // 演示原型不做实际过滤
+}
+</script>
+</body>
+</html>
