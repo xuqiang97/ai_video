@@ -4,7 +4,9 @@
 
 🌐 **在线 Demo:** https://xuqiang97.github.io/ai_video
 
-📖 **产品文档(语雀):** https://www.yuque.com/johnny97pm/zhcx/ai_video?singleDoc
+📊 **产品总览:** [PRODUCT_OVERVIEW.md](PRODUCT_OVERVIEW.md) (业务背景、用户故事、设计决策、风险与里程碑)
+
+📖 **操作文档(语雀):** https://www.yuque.com/johnny97pm/zhcx/ai_video?singleDoc
 
 ---
 
@@ -94,13 +96,15 @@ failed → retry → regenerating → ...
 
 ```
 ai_video/
-├── README.md
-├── index.html              # 根入口,重定向到 login
-├── login.html              # 登录页
-├── task-list.html          # 任务列表
-├── task-create.html        # 新建任务 wizard(3 步)
-├── task-detail.html        # 任务详情/审核 + 长视频合成
-└── spec/
+├── README.md                  # 当前文件
+├── PRODUCT_OVERVIEW.md        # 产品总览(业务领导 / 老板 / 跨部门同事)
+├── index.html                 # 根入口,重定向到 login
+├── login.html                 # 登录页
+├── task-list.html             # 任务列表
+├── task-create.html           # 新建任务 wizard(3 步)
+├── task-detail.html           # 任务详情/审核 + 长视频合成
+└── spec/                      # 给研发 / AI 写代码用
+    ├── common.spec.md         # 通用约定(其他 spec 的依赖基础)
     ├── login.spec.md
     ├── task-list.spec.md
     ├── task-create.spec.md
@@ -140,12 +144,21 @@ python3 -m http.server 8000
 
 ---
 
+## 产品文档
+
+面向**业务领导 / 老板 / 跨部门同事 / 新人入职**的非技术性总览。
+
+- [PRODUCT_OVERVIEW.md](PRODUCT_OVERVIEW.md) — **产品总览**(业务背景 / 用户故事 / 关键产品决策 / 一二期范围 / 成功度量 / 风险与里程碑)
+
 ## 设计文档
 
-- [login.html 规格](spec/login.spec.md) — 登录页
-- [task-list.html 规格](spec/task-list.spec.md) — 任务列表
-- [task-create.html 规格](spec/task-create.spec.md) — 新建任务 wizard
-- [task-detail.html 规格](spec/task-detail.spec.md) — 任务详情 / 审核 / 合成
+spec 文档面向 **AI 辅助写代码**(Claude / Cursor / Copilot 等)而设计。把 spec.md 和对应 HTML 原型一起喂给 AI,可生成接近可用的真实前后端代码。
+
+- [common.spec.md](spec/common.spec.md) — **通用约定**(技术栈 / ID 规则 / 鉴权 / 错误码 / 全局数据模型),其他 spec 的依赖基础,先看这个
+- [login.spec.md](spec/login.spec.md) — 登录页
+- [task-list.spec.md](spec/task-list.spec.md) — 任务列表
+- [task-create.spec.md](spec/task-create.spec.md) — 新建任务 wizard
+- [task-detail.spec.md](spec/task-detail.spec.md) — 任务详情 / 审核 / 合成
 
 ---
 
