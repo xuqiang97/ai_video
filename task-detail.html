@@ -387,6 +387,22 @@ ul, ol { list-style: none; }
 }
 .task-meta-item .label { color: var(--text-3); margin-right: 4px; }
 .task-meta-item .value { color: var(--text-1); }
+.task-creator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  background: var(--bg-active);
+  color: var(--text-3);
+  font-weight: 500;
+}
+.task-creator .ti { font-size: 12px; }
+.task-creator.me {
+  background: var(--brand-bg);
+  color: var(--brand);
+}
 
 /* 进度环 */
 .progress-mini {
@@ -1428,6 +1444,7 @@ ul, ol { list-style: none; }
         <div class="task-meta-item"><span class="label">脚本模型:</span><span class="value">GPT-5.4</span></div>
         <div class="task-meta-item"><span class="label">风格:</span><span class="value"><span class="tag tag-warning" style="font-size:11px;">激进版</span></span></div>
         <div class="task-meta-item"><span class="label">视频模型:</span><span class="value">Seedance 2.0</span></div>
+        <div class="task-meta-item"><span class="label">创建人:</span><span class="value"><span class="task-creator me" style="font-size:11px;"><i class="ti ti-user"></i>王运营 · 我</span></span></div>
         <div class="task-meta-item"><span class="label">创建:</span><span class="value font-mono" style="font-size:12px;">2026-04-25 14:35:21</span></div>
         <div class="task-meta-item"><span class="label">更新:</span><span class="value font-mono" style="font-size:12px;">2026-04-25 14:55:30</span></div>
       </div>
